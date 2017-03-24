@@ -1,3 +1,5 @@
+<?php use App\Repositories\FileRepository; ?>
+
 @extends('layouts.app')
 
 @section('content')
@@ -20,7 +22,7 @@
 					</div>
 					
 					<div class="form-group {!! $errors->has('category') ? 'has-error' : '' !!}">
-						{!! Form::select('category', array(null => 'No category', 'computers' => 'Computer', 'laptops' => 'Laptop', 'phones' => 'Phone', 'others' => 'Others' ), null, ['class' => 'form-control']) !!}
+						{!! Form::select('category', FileRepository::makeArray(), null, ['class' => 'form-control']) !!}
 						{!! $errors->first('category', '<small class="help-block">:message</small>') !!}
 					</div>
 

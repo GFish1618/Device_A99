@@ -23,6 +23,8 @@ Route::post('admin/display', 'UsersController@display')->name('admin.display');
 Route::get('admin/display', 'UsersController@display');
 Route::resource('admin', 'UsersController');
 
+Route::get('admin/cat', 'DevicesController@addCategory');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');

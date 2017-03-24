@@ -10,6 +10,7 @@ use App\Http\Requests\Devices\DevicesUpdateRequest;
 use App\Http\Requests\Devices\DevicesSearchRequest;
 
 use App\Repositories\DeviceRepository;
+use App\Repositories\FileRepository;
 
 use Excel;
 
@@ -144,5 +145,11 @@ class DevicesController extends Controller
     public function exportxls()
     {
         $this->deviceRepository->export();
+    }
+
+    public function addCategory()
+    {
+        FileRepository::addCategory('test');
+        return redirect('device');
     }
 }

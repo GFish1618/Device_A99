@@ -1,3 +1,6 @@
+<?php use App\Repositories\FileRepository; ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,16 +88,20 @@
             </div>
             <div class="panel-body">
                 <a href="{{ url('/device') }}">All</a><br>
-                <a href="{{ url('/device/category/computers') }}">Computers</a><br>
-                <a href="{{ url('/device/category/laptops') }}">Laptops</a><br>
-                <a href="{{ url('/device/category/phones') }}">Phones</a><br>
-                <a href="{{ url('/device/category/others') }}">Others</a>
+                <?php
+                    $line=0;
+                    while ($line<FileRepository::length()-1)
+                    {
+                        echo('<a href="'.url('/device/category/'.FileRepository::readLine($line)).'">'.FileRepository::readLine($line).'</a><br>');
+                        $line++;
+                    }
+                ?>
             </div>
         </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Fonctions</h3>
-            </div><br>
+            </div>
             <div class="panel-body">
                 {!! link_to_route('device.search', 'Search', [], ['class' => 'btn btn-warning']) !!}
                 {!! link_to_route('device.create', 'Add a device', [], ['class' => 'btn btn-success ']) !!}

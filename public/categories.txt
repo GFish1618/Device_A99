@@ -1,0 +1,4 @@
+computers
+laptops
+phones
+others
