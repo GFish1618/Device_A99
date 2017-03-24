@@ -1,15 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="col-sm-offset-2 col-sm-4">
+    <div class="col-sm-8">
     	@if(session()->has('ok'))
 			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
 		@endif
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<h3 class="panel-title">Devices list</h3>
-			</div>
-			<table class="table">
+		<ol class="breadcrumb breadcrumb-arrow">
+		<li><a href="#">Home</a></li>
+		<li><a href="#">Library</a></li>
+		<li class="active"><span>Data</span></li>
+		</ol>
+		<div class="panel panel-default">
+ 		<div class="panel-body">
+		 <div class="col-md-12">
+			<table class="table table-bordered">
 				<thead>
 					<tr>
 						<th>User</th>
@@ -35,8 +39,10 @@
 					@endforeach
 	  			</tbody>
 			</table>
+			{!! $links !!}
+			</div>
 		</div>
-		{!! $links !!}
+		
 		<br><br>
 	</div>
 @endsection
