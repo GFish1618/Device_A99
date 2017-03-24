@@ -115,7 +115,7 @@ class UsersController extends Controller
 
     public function display(UsersSearchRequest $request)
     {
-        $users = $this->usersRepository->search($request->all(), 0);
+        $users = $this->usersRepository->search($request->all(), $this->nbrPerPage);
 
         $links = $users->render();
 

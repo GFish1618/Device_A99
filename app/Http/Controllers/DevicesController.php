@@ -125,7 +125,7 @@ class DevicesController extends Controller
 
     public function display(DevicesSearchRequest $request)
     {
-        $devices = $this->deviceRepository->search($request->all(), 0);
+        $devices = $this->deviceRepository->search($request->all(), $this->nbrPerPage);
 
         $links = $devices->render();
 
