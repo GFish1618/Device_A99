@@ -15,6 +15,9 @@ Route::post('device/display', 'DevicesController@display')->name('device.display
 Route::get('device/display', 'DevicesController@display');
 Route::get('device/category/{cat}', 'DevicesController@category')->name('device.category');
 Route::get('device/export', 'DevicesController@exportxls')->name('device.exportxls');
+Route::get('admin/categories', 'DevicesController@addCategoryForm')->name('device.addCatF');
+Route::post('admin/categories', 'DevicesController@addCategoryPost')->name('device.addCatP');
+Route::post('admin/categories/del', 'DevicesController@deleteCategory')->name('device.deleteCat');
 Route::resource('device', 'DevicesController');
 
 
@@ -22,8 +25,6 @@ Route::get('admin/search', 'UsersController@search')->name('admin.search');
 Route::post('admin/display', 'UsersController@display')->name('admin.display');
 Route::get('admin/display', 'UsersController@display');
 Route::resource('admin', 'UsersController');
-
-Route::get('admin/cat', 'DevicesController@addCategory');
 
 Auth::routes();
 

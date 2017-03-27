@@ -51,11 +51,22 @@ class FileRepository
         return $array;
     }
 
-    static function addCategory(string $new_cat)
+    static function addCategory($new_cat)
     {
-    	$file = fopen($file_path, 'a');
+    	$file = fopen('categories.txt', 'a');
         fseek($file, 0, SEEK_END);
         fputs($file, "\n".$new_cat);
         fclose($file);
     }
+
+    static function deleteCategory($del_cat)
+    {
+    	$file = fopen('categories.txt', 'a');
+    	$contents = file_get_contents('categories.txt');
+		$contents = str_replace($del_cat."\n", '', $contents);
+		$contents = str_replace("\n".$del_cat, '', $contents);
+		file_put_contents('categories.txt', $contents);
+        fclose($file);
+    }
+
 }

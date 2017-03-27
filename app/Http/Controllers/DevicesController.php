@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Devices\DevicesCreateRequest;
 use App\Http\Requests\Devices\DevicesUpdateRequest;
 use App\Http\Requests\Devices\DevicesSearchRequest;
+use App\Http\Requests\Devices\DevicesCategoryRequest;
 
 use App\Repositories\DeviceRepository;
 use App\Repositories\FileRepository;
@@ -20,7 +21,7 @@ class DevicesController extends Controller
 {
  
 	protected $deviceRepository;
-	protected $nbrPerPage = 7;
+	protected $nbrPerPage = 5;
 
 	public function __construct(DeviceRepository $deviceRepository)
     {
@@ -147,9 +148,22 @@ class DevicesController extends Controller
         $this->deviceRepository->export();
     }
 
-    public function addCategory()
+    public function addCategoryForm()
     {
-        FileRepository::addCategory('test');
-        return redirect('device');
+        return view('addCategory');
+    }
+
+    public function addCategoryPost(DevicesCategoryRequest $request)
+    {
+        $test = $request->all();
+        FileRepository::addCategory(strtolower($test['new_category']));
+        return redirect('admin/categories')->withOk('The category '.$test['new_category'].' was added');
+    }
+
+    public function deleteCategory(DevicesCategoryRequest $request)
+    {
+        $test = $request->all();
+        FileRepository::deleteCategory(strtolower($test['category']));
+        return redirect('admin/categories')->withOk('The category '.$test['category'].' was deleted');
     }
 }

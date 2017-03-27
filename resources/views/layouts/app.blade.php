@@ -55,10 +55,51 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
-                        <li><a href="{{ url('/admin') }}">Admin</a></li>
                         @if (Auth::guest())
                             <li><a href="{{ url('/login') }}">Login</a></li>
                         @else
+
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    Devices <span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="{{ url('device') }}">
+                                            Home
+                                        </a>
+                                        <a href="{{ route('device.search') }}">
+                                            Search
+                                        </a>
+                                        <a href="{{ route('device.create') }}">
+                                            Add a device
+                                        </a>
+                                        <a href="{{ route('device.exportxls') }}">
+                                            Export to excel
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    Admin <span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="{{ url('/admin') }}">
+                                            Users
+                                        </a>
+                                        <a href="{{ url('/admin/categories') }}">
+                                            Categories
+                                        </a>
+
+                                    </li>
+                                </ul>
+                            </li>
+
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -121,49 +162,27 @@
                 </div>
             </div>
             </div>
-<<<<<<< HEAD
-            <div class="panel-body">
-                <a href="{{ url('/device') }}">All</a><br>
+
+            <div class="list-group">
+                <a href="{{ url('/device') }}" class="list-group-item">All</a>
                 <?php
                     $line=0;
                     while ($line<FileRepository::length()-1)
                     {
-                        echo('<a href="'.url('/device/category/'.FileRepository::readLine($line)).'">'.FileRepository::readLine($line).'</a><br>');
+                        echo('<a href="'.url('/device/category/'.FileRepository::readLine($line)).'" class="list-group-item">'.FileRepository::readLine($line).'</a>');
                         $line++;
                     }
                 ?>
-=======
->>>>>>> a0f47ea0b69c14c5c8d07ca0250d0e916e373395
             </div>
 
-        <div class="list-group">
-     
-        <a href="{{ url('/device') }}" class="list-group-item">All</a>
-        <a href="{{ url('/device/category/computers') }}" class="list-group-item">Computers</a>
-        <a href="{{ url('/device/category/laptops') }}" class="list-group-item">Laptops</a>
-        <a href="{{ url('/device/category/phones') }}" class="list-group-item">Phones</a>
-        <a href="{{ url('/device/category/others') }}" class="list-group-item">Others</a>
-        </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-<<<<<<< HEAD
-                <h3 class="panel-title">Fonctions</h3>
-            </div>
-=======
-                <h3 class="panel-title">Functions</h3>
-            </div><br>
->>>>>>> a0f47ea0b69c14c5c8d07ca0250d0e916e373395
-            <div class="panel-body">
-                {!! link_to_route('device.search', 'Search', [], ['class' => 'btn btn-warning']) !!}
-                {!! link_to_route('device.create', 'Add a device', [], ['class' => 'btn btn-success ']) !!}
-                {!! link_to_route('device.exportxls', 'Export to excel', [], ['class' => 'btn btn-info']) !!}
-            </div>
+        
+        
         </div>
     </div>
 
         @yield('content')
         
-    </div>
+    <!--</div>
     <div class="col-sm-2">
 		<div class="panel panel-primary">	
 			<div class="panel-heading"><h3 class="panel-title">Search for device</h3></div>
@@ -269,7 +288,7 @@
 		</a>
 		<br><br>
 	</div>
-    </div>
+    </div>-->
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>
