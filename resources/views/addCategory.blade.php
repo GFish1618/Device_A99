@@ -49,6 +49,8 @@
 						{!! $errors->first('category', '<small class="help-block">:message</small>') !!}
 					</div>
 
+					
+
 					{!! Form::submit('Delete', ['class' => 'btn btn-primary pull-right']) !!}
 					{!! Form::close() !!}
 				</div>
