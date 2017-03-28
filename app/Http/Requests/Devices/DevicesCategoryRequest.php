@@ -24,7 +24,7 @@ class DevicesCategoryRequest extends Request
     public function rules()
     {
         return [
-            'new_category' => 'alpha',
+            'new_category' => '',
         ];
     }
 }

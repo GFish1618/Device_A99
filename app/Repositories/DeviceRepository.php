@@ -28,8 +28,8 @@ class DeviceRepository
 		$device->mouse_sn = $inputs['mouse_sn'];
 		$device->external_monitor = isset($inputs['external_monitor']);
 		$device->external_mon_cable = isset($inputs['external_mon_cable']);
-		$device->installed_memory = intval($inputs['installed_memory']);
-		$device->core_speed = intval($inputs['core_speed']);
+		$device->installed_memory = $inputs['installed_memory'];
+		$device->core_speed = $inputs['core_speed'];
 
 		if ($inputs['purchased_date']!='')
 			$device->purchased_date = $inputs['purchased_date'];
@@ -73,6 +73,19 @@ class DeviceRepository
 	public function destroy($id)
 	{
 		$this->getById($id)->delete();
+	}
+
+	public function reset()
+	{
+		$devices = $this->device->toArray();
+		//echo $devices;
+		//echo '<pre>'; print_r($devices); echo '</pre>';
+		foreach ($devices as $row) {
+			echo($row);
+			//$row->delete();
+		}
+
+		//$this->device->reset();
 	}
 
 	public function search(Array $inputs, $n)
@@ -132,6 +145,19 @@ class DeviceRepository
 		return $device->paginate($n);
 	}
 
+	public function findSiblings(Devices $compare_device)
+	{
+		$device = new $this->device;
+		$device = $device
+			->where('user_name', $compare_device->user_name)
+			->where('device_name', $compare_device->device_name);
+
+		if ($compare_device->category!='')
+			$device = $device->where('category', $compare_device->category);
+			
+		return $device;
+	}
+
 	public function export()
 	{
         Excel::create('Devices', function($excel){
@@ -142,6 +168,7 @@ class DeviceRepository
 						'id',
 						'Username',
 						'Device name',
+						'Category',
 						'Mac adress',
 						'Ownership',
 						'Unit S/N',
@@ -186,6 +213,122 @@ class DeviceRepository
   				}
     		});
 		})->export('xls');
+	}
+
+	public function verifxls($filePath)
+	{
+		try{
+		$data = Excel::load($filePath, function($reader) {
+	    	})->get();
+	    	
+	    	foreach($data as $inputs){
+
+	    		$device = new $this->device;
+
+	    		/*if (!isset($inputs->username))
+	    			return false;
+	    		if (!isset($inputs->device_name))
+	    			return false;
+	    		if (!isset($inputs->category))
+		    		return false;
+	    		if (!isset($inputs->mac_adress))
+	    			return false;
+	    		if (!isset($inputs->ownership))
+	    			return false;
+	    		if (!isset($inputs->unit_sn))
+	    			return false;
+	    		if (!isset($inputs->keyboard_sn))
+	    			return false;
+	    		if (!isset($inputs->mouse_sn))
+	    			return false;
+	    		if (!isset($inputs->external_monitor))
+	    			return false;
+	    		if (!isset($inputs->external_monitor_cable))
+	    			return false;
+	    		if (!isset($inputs->installed_memory))
+	    			return false;
+	    		if (!isset($inputs->core_speed))
+	    			return false;
+	    		if (!isset($inputs->purchased_date))
+	    			return false;
+	    		if (!isset($inputs->current_location))
+	    			return false;
+	    		if (!isset($inputs->password))
+	    			return false;
+	    		if (!isset($inputs->os_version))
+	    			return false;
+	    		if (!isset($inputs->department))
+	    			return false;
+	    		if (!isset($inputs->remarks))
+	    			return false;*/
+	    	}
+
+	    	return true;
+		}
+		catch(\Exception $e)
+		{
+			return false;
+		}
+	}
+
+	public function import($filePath)
+	{
+	    Excel::load($filePath, function($reader) {
+	    	$data = $reader->get();
+	    	
+	    	foreach($data as $inputs){
+
+	    		$device = new $this->device;
+
+	    		if ($inputs->username!=null)
+	    			$device->user_name = $inputs->username;
+	    		if ($inputs->device_name!=null)
+	    			$device->device_name = $inputs->device_name;
+	    		if ($inputs->category!=null)
+	    			$device->category = $inputs->category;
+	    		if ($inputs->mac_adress!=null)
+	    			$device->mac_adress = $inputs->mac_adress;
+	    		if ($inputs->ownership!=null)
+	    			$device->ownership = $inputs->ownership;
+	    		if ($inputs->unit_sn!=null)
+	    			$device->unit_sn = $inputs->unit_sn;
+	    		if ($inputs->keyboard_sn!=null)
+	    			$device->keyboard_sn = $inputs->keyboard_sn;
+	    		if ($inputs->mouse_sn!=null)
+	    			$device->mouse_sn = $inputs->mouse_sn;
+	    		if ($inputs->external_monitor!=null)
+	    			$device->external_monitor = $inputs->external_monitor;
+	    		if ($inputs->external_monintor_cable!=null)
+	    			$device->external_mon_cable = $inputs->external_monitor_cable;
+	    		if ($inputs->installed_memory!=null)
+	    			$device->installed_memory = $inputs->installed_memory;
+	    		if ($inputs->core_speed!=null)
+	    			$device->core_speed = $inputs->core_speed;
+	    		if ($inputs->purchased_date!=null)
+	    			$device->purchased_date = $inputs->purchased_date;
+	    		if ($inputs->current_location!=null)
+	    			$device->current_location = $inputs->current_location;
+	    		if ($inputs->password!=null)
+	    			$device->password = $inputs->password;
+	    		if ($inputs->os_version!=null)
+	    			$device->os_version = $inputs->os_version;
+	    		if ($inputs->department!=null)
+	    			$device->department = $inputs->department;
+	    		if ($inputs->remarks!=null)
+	    			$device->remarks = $inputs->remarks;
+
+	    		$siblings = $this->findSiblings($device);
+	    		while ($siblings->first() != null)
+	    		{
+	    			$siblings->first()->delete();
+	    			$siblings = $this->findSiblings($device);
+	    		}
+
+	    		//echo ($device."<br>");
+	    		$device->save();
+	    	}
+	    	
+		});
 	}
 
 }

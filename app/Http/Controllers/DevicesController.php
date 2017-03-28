@@ -9,6 +9,7 @@ use App\Http\Requests\Devices\DevicesCreateRequest;
 use App\Http\Requests\Devices\DevicesUpdateRequest;
 use App\Http\Requests\Devices\DevicesSearchRequest;
 use App\Http\Requests\Devices\DevicesCategoryRequest;
+use App\Http\Requests\Devices\DevicesImportRequest;
 
 use App\Repositories\DeviceRepository;
 use App\Repositories\FileRepository;
@@ -120,6 +121,13 @@ class DevicesController extends Controller
 		return back();
     }
 
+    public function reset()
+    {
+        $this->deviceRepository->reset();
+
+        //return back();
+    }
+
     public function search()
     {
         return view('search');
@@ -146,6 +154,21 @@ class DevicesController extends Controller
     public function exportxls()
     {
         $this->deviceRepository->export();
+    }
+
+    public function importxls(DevicesImportRequest $request)
+    {
+        if($this->deviceRepository->verifxls($request->all()['file']))
+        {
+
+            $this->deviceRepository->import($request->all()['file']);
+            return redirect('/device')->withOk("File data added");
+        }
+        else
+        {
+            return redirect('/device/import')->withOk("Incorrect file type");
+        }
+        
     }
 
     public function addCategoryForm()

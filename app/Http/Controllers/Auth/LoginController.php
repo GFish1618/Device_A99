@@ -73,9 +73,15 @@ class LoginController extends Controller
         {
             $user = User::firstOrCreate(
                 ['email' => $socialUser->getEmail()],
-                ['name' => $socialUser->getName()],
-                ['admin' => false]
+                ['name' => $socialUser->getName()]
             );
+
+            $user->nickname = $socialUser->getNickname();
+            if ($user->nickname == ''){$user->nickname = $user->name;}
+            $user->avatar = $socialUser->getAvatar();
+            //$user->password = $inputs['password'];
+    
+            $user->save();
 
             $user->socialProviders()->create(
                 ['provider_id' => $socialUser->getId(), 'provider' => 'google']
@@ -88,7 +94,7 @@ class LoginController extends Controller
             $user = $socialProvider->user;
             if($user->admin){
                 auth()->login($user);
-                return redirect('/device')->withOk("Access granted");;
+                return redirect('/device')->withOk("Access granted");
             }
         }
 

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Devices;
 
 use App\Http\Requests\Request;
 
-class DevicesDelCategoryRequest extends Request
+class DevicesImportRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class DevicesDelCategoryRequest extends Request
     public function rules()
     {
         return [
-            'new_category' => 'alpha',
+            'file' => 'required',
         ];
     }
 }

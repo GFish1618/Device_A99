@@ -78,10 +78,30 @@
                                         <a href="{{ route('device.exportxls') }}">
                                             Export to excel
                                         </a>
+                                        
+                                        @if (Auth::user()->admin == 2)
+                                        <a href="{{ url('device/import') }}">
+                                            Import from excel
+                                        </a>
+
+                                            <SCRIPT LANGUAGE="JavaScript"> 
+                                                function confirmation() { 
+                                                var msg = "Are you really sure you want to reset the database?"; 
+                                                if (confirm(msg)) 
+                                                    location.replace("{{route('device.reset')}}"); 
+                                                } 
+                                            </SCRIPT> 
+
+                                        <a href="#" onclick="confirmation();">
+                                            Reset database
+                                        </a>
+                                        @endif
+
                                     </li>
                                 </ul>
                             </li>
-
+                            
+                            @if (Auth::user()->admin == 2)
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     Admin <span class="caret"></span>
@@ -99,10 +119,11 @@
                                     </li>
                                 </ul>
                             </li>
+                            @endif
 
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    {{ Auth::user()->nickname }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
@@ -124,6 +145,8 @@
                 </div>
             </div>
         </nav>
+
+        @if (!Auth::guest())
         <div class="container-fluid">
         <div class="col-sm-offset-0 col-sm-2">
     
@@ -133,16 +156,22 @@
                 <div class="cardheader">
 
                 </div>
+                <?php
+                    //$user = Socialite::driver('google')->userFromToken(Auth::user()->remember_token);
+                ?>
                 <div class="avatar">
-                    <img alt="" src="http://lorempixel.com/100/100/people/1/">
+                    <img alt="" src="{{ Auth::user()->avatar }}">
                 </div>
                 <div class="info">
                     <div class="title">
-                        <a target="_blank" href="http://scripteden.com/">John Doe</a>
+                        {{ Auth::user()->nickname }}
                     </div>
-                    <div class="desc">Passionate designer</div>
-                    <div class="desc">Curious developer</div>
-                    <div class="desc">Tech geek</div>
+                     <div class="desc">
+                        {{ Auth::user()->name }}
+                    </div>
+                    <div class="desc">
+                        {{ Auth::user()->email }}
+                    </div>
                 </div>
                 <div class="bottom">
                     <a class="btn btn-primary btn-twitter btn-sm" href="https://twitter.com/webmaniac">
@@ -161,7 +190,9 @@
                     </a>
                 </div>
             </div>
-            </div>
+        
+
+        </div>
 
             <div class="list-group">
                 <a href="{{ url('/device') }}" class="list-group-item">All</a>
@@ -179,7 +210,7 @@
         
         </div>
     </div>
-
+        @endif
         @yield('content')
         
 

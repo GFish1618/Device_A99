@@ -24,8 +24,8 @@ class CreateDevicesTable extends Migration
             $table->string('mouse_sn', 100);
             $table->boolean('external_monitor');
             $table->boolean('external_mon_cable');
-            $table->integer('installed_memory');
-            $table->integer('core_speed');
+            $table->string('installed_memory', 100);
+            $table->string('core_speed', 100);
             $table->date('purchased_date');
             $table->string('current_location', 100);
             $table->string('password', 100);

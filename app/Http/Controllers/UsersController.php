@@ -8,6 +8,7 @@ use App\Http\Requests\Users\UsersSearchRequest;
 use App\Http\Requests\Users\UsersUpdateRequest;
 
 use App\Repositories\UsersRepository;
+//use \Auth;
 
 class UsersController extends Controller
 {
@@ -29,6 +30,7 @@ class UsersController extends Controller
      */
     public function index()
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
 
         $users = $this->usersRepository->getPaginate($this->nbrPerPage);
 		$links = $users->render();
@@ -76,6 +78,7 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
         $user = $this->usersRepository->getById($id);
 
 		return view('user_edit',  compact('user'));
@@ -90,6 +93,7 @@ class UsersController extends Controller
      */
     public function update(UsersUpdateRequest $request, $id)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
         $this->usersRepository->update($id, $request->all());
 		
 		return redirect('admin')->withOk("The user was updated");
@@ -103,6 +107,7 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
         $this->usersRepository->destroy($id);
 
 		return back();
@@ -110,11 +115,13 @@ class UsersController extends Controller
 
     public function search()
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
         return view('user_search');
     }
 
     public function display(UsersSearchRequest $request)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
         $users = $this->usersRepository->search($request->all(), $this->nbrPerPage);
 
         $links = $users->render();

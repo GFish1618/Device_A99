@@ -13,11 +13,19 @@
 Route::get('device/search', 'DevicesController@search')->name('device.search');
 Route::post('device/display', 'DevicesController@display')->name('device.display');
 Route::get('device/display', 'DevicesController@display');
+
 Route::get('device/category/{cat}', 'DevicesController@category')->name('device.category');
+
 Route::get('device/export', 'DevicesController@exportxls')->name('device.exportxls');
+Route::get('device/52830473571418', 'DevicesController@reset')->name('device.reset');
+
+Route::get('device/import', function (){ return view('import'); });
+Route::post('device/import', 'DevicesController@importxls')->name('device.importxls');
+
 Route::get('admin/categories', 'DevicesController@addCategoryForm')->name('device.addCatF');
 Route::post('admin/categories', 'DevicesController@addCategoryPost')->name('device.addCatP');
 Route::post('admin/categories/del', 'DevicesController@deleteCategory')->name('device.deleteCat');
+
 Route::resource('device', 'DevicesController');
 
 

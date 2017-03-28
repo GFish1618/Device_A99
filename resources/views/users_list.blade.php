@@ -24,10 +24,14 @@
 					@foreach ($users as $user)
 						<tr>
 							<td>
-								@if($user->admin)
+								@if($user->admin == 2)
 									Admin
 								@else
-									Guest
+									@if($user->admin == 1)
+										User
+									@else
+										Guest
+									@endif
 								@endif
 							</td>
 							<td>{!! $user->name !!}</td>
