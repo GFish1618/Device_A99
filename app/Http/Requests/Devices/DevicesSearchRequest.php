@@ -40,7 +40,7 @@ class DevicesSearchRequest extends Request
             'password' => '',
             'os_version' => '',
             'department' => '',
-            'remarks' => ''
+            'remarks' => '',
         ];
     }
 }

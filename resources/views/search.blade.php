@@ -9,7 +9,7 @@
 			<div class="panel-heading"><h3 class="panel-title">Search for device</h3></div>
 			<div class="panel-body"> 
 				<div class="col-sm-12">
-					{!! Form::open(['route' => 'device.display', 'class' => 'form-horizontal panel']) !!}	
+					{!! Form::open(['route' => 'device.display', 'class' => 'form-horizontal panel', 'method' => 'post']) !!}	
 
 					<div class="form-group {!! $errors->has('user_name') ? 'has-error' : '' !!}">
 						{!! Form::text('user_name', null, ['class' => 'form-control', 'placeholder' => 'Username']) !!}
@@ -98,6 +98,7 @@
 						{!! Form::text('department', null, ['class' => 'form-control', 'placeholder' => 'Department']) !!}
 						{!! $errors->first('department', '<small class="help-block">:message</small>') !!}
 					</div>
+
 
 					{!! Form::submit('Search', ['class' => 'btn btn-primary pull-right']) !!}
 					{!! Form::close() !!}

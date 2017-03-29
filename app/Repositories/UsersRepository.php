@@ -23,7 +23,7 @@ class UsersRepository
 		$user->save();
 	}
 
-	public function getPaginate($n)
+	public function getPaginate($n, $orderby = 'id')
 	{
 		return $this->user->paginate($n);
 	}

@@ -20,7 +20,9 @@
 						<th>Device</th>
 						<th></th>
 						<th></th>
+						@if (Auth::user()->admin >= 2)
 						<th></th>
+						@endif
 					</tr>
 				</thead>
 				<tbody>
@@ -30,11 +32,13 @@
 							<td class="text-primary"><strong>{!! $device->device_name !!}</strong></td>
 							<td>{!! link_to_route('device.show', 'Show', [$device->id], ['class' => 'btn btn-success btn-block']) !!}</td>
 							<td>{!! link_to_route('device.edit', 'Edit', [$device->id], ['class' => 'btn btn-warning btn-block']) !!}</td>
+							@if (Auth::user()->admin >= 2)
 							<td>
 								{!! Form::open(['method' => 'DELETE', 'route' => ['device.destroy', $device->id]]) !!}
 									{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-block', 'onclick' => 'return confirm(\'Are you sure?\')']) !!}
 								{!! Form::close() !!}
 							</td>
+							@endif
 						</tr>
 					@endforeach
 	  			</tbody>

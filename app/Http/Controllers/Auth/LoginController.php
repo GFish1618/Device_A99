@@ -68,6 +68,11 @@ class LoginController extends Controller
             return redirect('/');
         }
 
+        if (! preg_match("/@august99.com$/", $socialUser->getEmail()))
+        {
+            return redirect('/login')->withOk("Invalid Email");
+        }
+
         $socialProvider = SocialProvider::where('provider_id', $socialUser->getId())->first();
         if (!$socialProvider)
         {

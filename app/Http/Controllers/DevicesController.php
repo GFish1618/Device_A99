@@ -23,6 +23,7 @@ class DevicesController extends Controller
  
 	protected $deviceRepository;
 	protected $nbrPerPage = 5;
+    protected $orderby = 'id';
 
 	public function __construct(DeviceRepository $deviceRepository)
     {
@@ -116,6 +117,7 @@ class DevicesController extends Controller
      */
     public function destroy($id)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You are not allowed to delete");}
         $this->deviceRepository->destroy($id);
 
 		return back();
@@ -135,7 +137,7 @@ class DevicesController extends Controller
 
     public function display(DevicesSearchRequest $request)
     {
-        $devices = $this->deviceRepository->search($request->all(), $this->nbrPerPage);
+        $devices = $this->deviceRepository->search($request->all(), $this->nbrPerPage, $this->orderby);
 
         $links = $devices->render();
 

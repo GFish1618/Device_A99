@@ -75,10 +75,14 @@
                                         <a href="{{ route('device.create') }}">
                                             Add a device
                                         </a>
+                                        <a href="EquipmentReleaseResponsibilityForm.docx">
+                                            Download <br>Responsability Form
+                                        </a>
+                                        
                                         <a href="{{ route('device.exportxls') }}">
                                             Export to excel
                                         </a>
-                                        
+
                                         @if (Auth::user()->admin == 2)
                                         <a href="{{ url('device/import') }}">
                                             Import from excel
@@ -101,7 +105,7 @@
                                 </ul>
                             </li>
                             
-                            @if (Auth::user()->admin == 2)
+                            @if (Auth::user()->admin >= 2)
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     Admin <span class="caret"></span>
@@ -171,6 +175,13 @@
                     </div>
                     <div class="desc">
                         {{ Auth::user()->email }}
+                    </div>
+                    <div class="desc">
+                        @if (Auth::user()->admin >= 2)
+                            Admin
+                        @else
+                            User
+                        @endif
                     </div>
                 </div>
                 <div class="bottom">

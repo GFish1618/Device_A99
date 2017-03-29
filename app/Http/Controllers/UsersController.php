@@ -129,4 +129,20 @@ class UsersController extends Controller
         return view('users_list', compact('users', 'links'));
 
     }
+
+    public function GetForm()
+    {
+
+        $file='EquipmentReleaseResponsibilityFormTemplate.rtf';
+        $newFile='EquipmentReleaseResponsibilityForm.rtf';
+
+        $text=fopen($file,'r') or die("File missing"); 
+        $content=file_get_contents($file); 
+        $contentMod=str_replace('_____________', 'test', $content);
+        fclose($text); 
+
+        $text2=fopen($newFile,'w+') or die("File missing"); 
+        fwrite($text2,$contentMod); 
+        fclose($text2);
+    }
 }

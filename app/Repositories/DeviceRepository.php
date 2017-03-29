@@ -45,9 +45,9 @@ class DeviceRepository
 		$device->save();
 	}
 
-	public function getPaginate($n)
+	public function getPaginate($n, $orderby = 'id')
 	{
-		return $this->device->paginate($n);
+		return $this->device->orderBy($orderby)->paginate($n);//->orderBy('username');
 	}
 
 	public function store(Array $inputs)
@@ -88,7 +88,7 @@ class DeviceRepository
 		//$this->device->reset();
 	}
 
-	public function search(Array $inputs, $n)
+	public function search(Array $inputs, $n, $orderby = 'id')
 	{
 		$device = new $this->device;
 		if (isset($inputs['user_name']) and $inputs['user_name']!=''){
@@ -154,6 +154,9 @@ class DeviceRepository
 
 		if ($compare_device->category!='')
 			$device = $device->where('category', $compare_device->category);
+
+		if ($compare_device->unit_sn!='')
+			$device = $device->where('unit_sn', $compare_device->unit_sn);
 			
 		return $device;
 	}
@@ -225,7 +228,7 @@ class DeviceRepository
 
 	    		$device = new $this->device;
 
-	    		/*if (!isset($inputs->username))
+	    		if (!isset($inputs->username))
 	    			return false;
 	    		if (!isset($inputs->device_name))
 	    			return false;
@@ -260,7 +263,7 @@ class DeviceRepository
 	    		if (!isset($inputs->department))
 	    			return false;
 	    		if (!isset($inputs->remarks))
-	    			return false;*/
+	    			return false;
 	    	}
 
 	    	return true;

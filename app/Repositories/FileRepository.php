@@ -45,7 +45,9 @@ class FileRepository
         {
             $line++;
             $category = fgets($file);
+            $category = substr($category, 0, -1);
             if ($category!=''){ $array += Array( $category => $category); }
+
         }
         fclose($file);
         return $array;
