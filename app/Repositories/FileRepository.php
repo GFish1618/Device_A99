@@ -41,12 +41,12 @@ class FileRepository
     	$array = Array(null => 'No category');
         $line = 0;
         $category ='_';
-        while ($category!='')
+        while ($category!="EndOfCat" and $category!='')
         {
             $line++;
             $category = fgets($file);
             $category = substr($category, 0, -1);
-            if ($category!=''){ $array += Array( $category => $category); }
+            if ($category!="EndOfCat" and $category!=''){ $array += Array( $category => $category); }
 
         }
         fclose($file);
@@ -55,9 +55,9 @@ class FileRepository
 
     static function addCategory($new_cat)
     {
-    	$file = fopen('categories.txt', 'a');
-        fseek($file, 0, SEEK_END);
-        fputs($file, "\n".$new_cat);
+    	$file = fopen('categories.txt', 'a+');
+        fseek($file, -2);
+        fputs($file, $new_cat."\n");
         fclose($file);
     }
 

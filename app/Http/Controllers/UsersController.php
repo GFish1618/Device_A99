@@ -33,9 +33,8 @@ class UsersController extends Controller
         if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
 
         $users = $this->usersRepository->getPaginate($this->nbrPerPage);
-		$links = $users->render();
 
-		return view('users_list', compact('users', 'links'));
+		return view('users_list', compact('users'));
     }
 
     /**

@@ -45,11 +45,9 @@
 					{!! Form::open(['route' => 'device.deleteCat', 'class' => 'form-horizontal panel']) !!}	
 
 					<div class="form-group {!! $errors->has('category') ? 'has-error' : '' !!}">
-						{!! Form::text('category', null, ['class' => 'form-control', 'placeholder' => 'Category to delete']) !!}
+						{!! Form::select('category', FileRepository::makeArray(), null, ['class' => 'form-control']) !!}
 						{!! $errors->first('category', '<small class="help-block">:message</small>') !!}
 					</div>
-
-					
 
 					{!! Form::submit('Delete', ['class' => 'btn btn-primary pull-right']) !!}
 					{!! Form::close() !!}

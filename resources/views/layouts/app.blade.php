@@ -14,9 +14,9 @@
     <title>{{ config('app.name', 'A99') }}</title>
 
     <!-- Styles -->
-    <link href="/css/app.css" rel="stylesheet">
-    <link href="/css/profile_card.css" rel="stylesheet">
-     <link href="/css/breadcrumbs.css" rel="stylesheet">
+    <link href="{{url('/css/app.css')}}" rel="stylesheet">
+    <link href="{{url('/css/profile_card.css')}}" rel="stylesheet">
+     <link href="{{url('/css/breadcrumbs.css')}}" rel="stylesheet">
 
 
     <!-- Scripts -->
@@ -72,10 +72,14 @@
                                         <a href="{{ route('device.search') }}">
                                             Search
                                         </a>
+
+                                        @if (Auth::user()->admin == 2)
                                         <a href="{{ route('device.create') }}">
                                             Add a device
                                         </a>
-                                        <a href="EquipmentReleaseResponsibilityForm.docx">
+                                        @endif
+
+                                        <a href="/EquipmentReleaseResponsibilityForm.docx">
                                             Download <br>Responsability Form
                                         </a>
                                         
@@ -89,11 +93,13 @@
                                         </a>
 
                                             <SCRIPT LANGUAGE="JavaScript"> 
-                                                function confirmation() { 
-                                                var msg = "Are you really sure you want to reset the database?"; 
-                                                if (confirm(msg)) 
-                                                    location.replace("{{route('device.reset')}}"); 
+                                            function confirmation() {  
+                                                if (confirm("Are you really sure you want to reset the database?")){
+                                                    if (confirm("Like really REALLY sure?")){
+                                                        location.replace("{{route('device.reset')}}"); 
+                                                    }
                                                 } 
+                                            }
                                             </SCRIPT> 
 
                                         <a href="#" onclick="confirmation();">
@@ -160,9 +166,7 @@
                 <div class="cardheader">
 
                 </div>
-                <?php
-                    //$user = Socialite::driver('google')->userFromToken(Auth::user()->remember_token);
-                ?>
+
                 <div class="avatar">
                     <img alt="" src="{{ Auth::user()->avatar }}">
                 </div>
@@ -180,7 +184,11 @@
                         @if (Auth::user()->admin >= 2)
                             Admin
                         @else
-                            User
+                            @if (Auth::user()->admin >= 1)
+                                User
+                            @else
+                                Guest
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -226,6 +234,6 @@
         
 
     <!-- Scripts -->
-    <script src="/js/app.js"></script>
+    <script src="{{ url('/js/app.js') }}"></script>
 </body>
 </html>

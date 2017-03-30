@@ -19,9 +19,11 @@
 						<th>User</th>
 						<th>Device</th>
 						<th></th>
+						@if (Auth::user()->admin >= 1)						
 						<th></th>
 						@if (Auth::user()->admin >= 2)
 						<th></th>
+						@endif
 						@endif
 					</tr>
 				</thead>
@@ -31,6 +33,7 @@
 							<td>{!! $device->user_name !!}</td>
 							<td class="text-primary"><strong>{!! $device->device_name !!}</strong></td>
 							<td>{!! link_to_route('device.show', 'Show', [$device->id], ['class' => 'btn btn-success btn-block']) !!}</td>
+							@if (Auth::user()->admin >= 1)
 							<td>{!! link_to_route('device.edit', 'Edit', [$device->id], ['class' => 'btn btn-warning btn-block']) !!}</td>
 							@if (Auth::user()->admin >= 2)
 							<td>
@@ -39,11 +42,12 @@
 								{!! Form::close() !!}
 							</td>
 							@endif
+							@endif
 						</tr>
 					@endforeach
 	  			</tbody>
 			</table>
-			{!! $links !!}
+			{{ $devices->appends(Request::except('page'))->links() }}
 			</div>
 		</div>
 		

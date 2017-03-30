@@ -68,40 +68,42 @@ class LoginController extends Controller
             return redirect('/');
         }
 
-        if (! preg_match("/@august99.com$/", $socialUser->getEmail()))
+        /*if (! preg_match("/@august99.com$/", $socialUser->getEmail()))
         {
             return redirect('/login')->withOk("Invalid Email");
         }
-
-        $socialProvider = SocialProvider::where('provider_id', $socialUser->getId())->first();
-        if (!$socialProvider)
-        {
-            $user = User::firstOrCreate(
-                ['email' => $socialUser->getEmail()],
-                ['name' => $socialUser->getName()]
-            );
-
-            $user->nickname = $socialUser->getNickname();
-            if ($user->nickname == ''){$user->nickname = $user->name;}
-            $user->avatar = $socialUser->getAvatar();
-            //$user->password = $inputs['password'];
-    
-            $user->save();
-
-            $user->socialProviders()->create(
-                ['provider_id' => $socialUser->getId(), 'provider' => 'google']
-            );
-            auth()->login($user);
-            auth()->logout($user);
-        }
         else
-        {
-            $user = $socialProvider->user;
-            if($user->admin){
+        {*/
+            $socialProvider = SocialProvider::where('provider_id', $socialUser->getId())->first();
+            if (!$socialProvider)
+            {
+                $user = User::firstOrCreate(
+                    ['email' => $socialUser->getEmail()],
+                    ['name' => $socialUser->getName()]
+                );
+
+                $user->nickname = $socialUser->getNickname();
+                if ($user->nickname == ''){$user->nickname = $user->name;}
+                $user->avatar = $socialUser->getAvatar();
+                $user->admin = 0;
+        
+                $user->save();
+
+                $user->socialProviders()->create(
+                    ['provider_id' => $socialUser->getId(), 'provider' => 'google']
+                );
                 auth()->login($user);
-                return redirect('/device')->withOk("Access granted");
+                auth()->logout($user);
             }
-        }
+            else
+            {
+                $user = $socialProvider->user;
+                $user->avatar = $socialUser->getAvatar();
+            }
+            auth()->login($user);
+            return redirect('/device')->withOk("Access granted");
+        //}
+        
 
         return redirect('/login')->withOk("Access refused, wait for admin");
     }

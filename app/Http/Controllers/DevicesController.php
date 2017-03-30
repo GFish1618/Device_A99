@@ -23,7 +23,6 @@ class DevicesController extends Controller
  
 	protected $deviceRepository;
 	protected $nbrPerPage = 5;
-    protected $orderby = 'id';
 
 	public function __construct(DeviceRepository $deviceRepository)
     {
@@ -41,9 +40,8 @@ class DevicesController extends Controller
     {
 
         $devices = $this->deviceRepository->getPaginate($this->nbrPerPage);
-		$links = $devices->render();
 
-		return view('index', compact('devices', 'links'));
+		return view('index', compact('devices'));
     }
 
     /**
@@ -53,6 +51,8 @@ class DevicesController extends Controller
      */
     public function create()
     {
+        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+
         return view('create');
     }
 
@@ -64,6 +64,8 @@ class DevicesController extends Controller
      */
     public function store(DevicesCreateRequest $request)
     {
+        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+
         $device = $this->deviceRepository->store($request->all());
 
 		return redirect('device')->withOk("The device: " . $device->device_name . " was created");
@@ -90,6 +92,8 @@ class DevicesController extends Controller
      */
     public function edit($id)
     {
+        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+
         $device = $this->deviceRepository->getById($id);
 
 		return view('edit',  compact('device'));
@@ -104,9 +108,11 @@ class DevicesController extends Controller
      */
     public function update(DevicesUpdateRequest $request, $id)
     {
+        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+
         $this->deviceRepository->update($id, $request->all());
 		
-		return redirect('device')->withOk("The device: " . $request->input('user_name') . " was updated");
+		return redirect('device')->withOk("The device: " . $request->input('device_name') . " was updated");
     }
 
     /**
@@ -125,9 +131,17 @@ class DevicesController extends Controller
 
     public function reset()
     {
+        echo("<pre>__
+##|_          hmmm, 'press to reset'!
+##| |    _  .' ...wonder if that's for real??
+##| D- o')            __
+##|_| \.\",         -=(o '.
+##|     ||_           '.-.\
+##|    .\".            /|  \\\\
+##|   _|_|            '|  ||
+-----------------------_\_):,_------</pre>");
         $this->deviceRepository->reset();
-
-        //return back();
+        return back();
     }
 
     public function search()
@@ -137,7 +151,7 @@ class DevicesController extends Controller
 
     public function display(DevicesSearchRequest $request)
     {
-        $devices = $this->deviceRepository->search($request->all(), $this->nbrPerPage, $this->orderby);
+        $devices = $this->deviceRepository->search($request->all(), $this->nbrPerPage, $request->all()['orderby']);
 
         $links = $devices->render();
 
@@ -160,6 +174,8 @@ class DevicesController extends Controller
 
     public function importxls(DevicesImportRequest $request)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+
         if($this->deviceRepository->verifxls($request->all()['file']))
         {
 
@@ -168,18 +184,22 @@ class DevicesController extends Controller
         }
         else
         {
-            return redirect('/device/import')->withOk("Incorrect file type");
+            return redirect('/device/import')->withOk("Incorrect file columns");
         }
         
     }
 
     public function addCategoryForm()
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+
         return view('addCategory');
     }
 
     public function addCategoryPost(DevicesCategoryRequest $request)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+
         $test = $request->all();
         FileRepository::addCategory(strtolower($test['new_category']));
         return redirect('admin/categories')->withOk('The category '.$test['new_category'].' was added');
@@ -187,6 +207,8 @@ class DevicesController extends Controller
 
     public function deleteCategory(DevicesCategoryRequest $request)
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+
         $test = $request->all();
         FileRepository::deleteCategory(strtolower($test['category']));
         return redirect('admin/categories')->withOk('The category '.$test['category'].' was deleted');

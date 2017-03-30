@@ -84,11 +84,6 @@
 						{!! $errors->first('current_location', '<small class="help-block">:message</small>') !!}
 					</div>
 
-					<div class="form-group {!! $errors->has('password') ? 'has-error' : '' !!}">
-						{!! Form::text('password', null, ['class' => 'form-control', 'placeholder' => 'Device password']) !!}
-						{!! $errors->first('password', '<small class="help-block">:message</small>') !!}
-					</div>
-
 					<div class="form-group {!! $errors->has('os_version') ? 'has-error' : '' !!}">
 						{!! Form::text('os_version', null, ['class' => 'form-control', 'placeholder' => 'OS version']) !!}
 						{!! $errors->first('os_version', '<small class="help-block">:message</small>') !!}
@@ -99,6 +94,10 @@
 						{!! $errors->first('department', '<small class="help-block">:message</small>') !!}
 					</div>
 
+					<div class="form-group {!! $errors->has('orderby') ? 'has-error' : '' !!}">
+						{!! Form::select('orderby', ['id' => 'Order By', 'user_name' => 'User name', 'device_name' => 'Device name', 'category' => 'Categories', 'purchased_date' => 'Purchased Date', 'current_location' => 'Current Location'], null, ['class' => 'form-control']) !!}
+						{!! $errors->first('orderby', '<small class="help-block">:message</small>') !!}
+					</div>
 
 					{!! Form::submit('Search', ['class' => 'btn btn-primary pull-right']) !!}
 					{!! Form::close() !!}

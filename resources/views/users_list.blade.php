@@ -47,7 +47,7 @@
 	  			</tbody>
 			</table>
 		</div>
-		{!! $links !!}
+		{{ $users->appends(Request::except('page'))->links() }}
 		<br><br>
 	</div>
 @endsection

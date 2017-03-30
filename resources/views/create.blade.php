@@ -85,7 +85,8 @@
 					</div>
 
 					<div class="form-group {!! $errors->has('password') ? 'has-error' : '' !!}">
-						{!! Form::text('password', null, ['class' => 'form-control', 'placeholder' => 'Device password']) !!}
+						{!! Form::label('Device password') !!}
+						{!! Form::password('password', null, ['class' => 'form-control', 'placeholder' => 'Device password']) !!}
 						{!! $errors->first('password', '<small class="help-block">:message</small>') !!}
 					</div>
 

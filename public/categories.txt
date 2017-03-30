@@ -1,4 +1,4 @@
-computers
-laptops
-phones
+computer
+laptop
+phone
 others

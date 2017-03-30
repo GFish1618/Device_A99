@@ -35,7 +35,12 @@
 				<p><strong class="text-primary">Core speed : </strong> {{ $device->core_speed }}</p>
 				<p><strong class="text-primary">Purchased date : </strong> {{ $device->purchased_date }}</p>
 				<p><strong class="text-primary">Current location : </strong> {{ $device->current_location }}</p>
-				<p><strong class="text-primary">password : </strong> {{ $device->password }}</p>
+
+				@if (Auth::user()->admin >= 2)
+				<p><strong class="text-primary">password : </strong> 
+				<span>{{ $device->password }}</span>
+				</p>
+				@endif
 				<p><strong class="text-primary">OS version : </strong> {{ $device->os_version }}</p>
 				<p><strong class="text-primary">Department : </strong> {{ $device->department }}</p>
 				<p><strong class="text-primary">Remarks : </strong> {{ $device->remarks }}</p>
