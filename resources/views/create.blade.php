@@ -51,6 +51,16 @@
 						{!! $errors->first('mouse_sn', '<small class="help-block">:message</small>') !!}
 					</div>
 
+					<div class="form-group {!! $errors->has('charger_sn') ? 'has-error' : '' !!}">
+						{!! Form::text('charger_sn', null, ['class' => 'form-control', 'placeholder' => 'Charger S/N']) !!}
+						{!! $errors->first('charger_sn', '<small class="help-block">:message</small>') !!}
+					</div>
+
+					<div class="form-group {!! $errors->has('charger_version') ? 'has-error' : '' !!}">
+						{!! Form::text('charger_version', null, ['class' => 'form-control', 'placeholder' => 'Charger version']) !!}
+						{!! $errors->first('charger_version', '<small class="help-block">:message</small>') !!}
+					</div>
+
 					<div class="form-group">
 						<div class="checkbox">
 							<label>
@@ -60,6 +70,11 @@
 						<div class="checkbox">
 							<label>
 								{!! Form::checkbox('external_mon_cable', 1, null) !!} External monitor cable
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								{!! Form::checkbox('laptop_sleeve', 1, null) !!} Laptop sleeve
 							</label>
 						</div>
 					</div>
@@ -75,7 +90,8 @@
 					</div>
 
 					<div class="form-group {!! $errors->has('purchased_date') ? 'has-error' : '' !!}">
-						{!! Form::date('purchased_date', '00/00/0000', ['class' => 'form-control', 'placeholder' => 'Purchased date']) !!}
+						{!! Form::label('Purchased date') !!}
+						{!! Form::date('purchased_date', '00/00/0000') !!}
 						{!! $errors->first('purchased_date', '<small class="help-block">:message</small>') !!}
 					</div>
 

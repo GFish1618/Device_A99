@@ -22,8 +22,11 @@ class CreateDevicesTable extends Migration
             $table->string('unit_sn', 100);
             $table->string('keyboard_sn', 100);
             $table->string('mouse_sn', 100);
+            $table->string('charger_sn', 100);
+            $table->string('charger_model', 100);
             $table->boolean('external_monitor');
             $table->boolean('external_mon_cable');
+            $table->boolean('laptop_sleeve');
             $table->string('installed_memory', 100);
             $table->string('core_speed', 100);
             $table->date('purchased_date');

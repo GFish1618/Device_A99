@@ -5,14 +5,32 @@
     	@if(session()->has('ok'))
 			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
 		@endif
-		<ol class="breadcrumb breadcrumb-arrow">
-		<li><a href="#">Home</a></li>
-		<li><a href="#">Library</a></li>
-		<li class="active"><span>Data</span></li>
-		</ol>
+		@if(session()->has('error'))
+			<div class="alert alert-danger alert-dismissible">{!! session('error') !!}</div>
+		@endif
 		<div class="panel panel-default">
  		<div class="panel-body">
 		 <div class="col-md-12">
+			{!! Form::open(['method' => 'POST', 'route' => ['device.indexPage'], 'id' => 'nb_per_page']) !!}
+				<select name="nbp" class="btn pull-right" onchange="document.getElementById('nb_per_page').submit();">
+					<option <?php if($_SESSION['nbp']==5){echo 'selected';} ?> >5</option>
+					<option <?php if($_SESSION['nbp']==10){echo 'selected';} ?> >10</option>
+					<option <?php if($_SESSION['nbp']==20){echo 'selected';} ?> >20</option>
+					<option <?php if($_SESSION['nbp']==50){echo 'selected';} ?> >50</option>
+					<option <?php if($_SESSION['nbp']==100){echo 'selected';} ?> >100</option>
+				</select>
+				<label class="pull-right"> Items per page : </label>
+			{!! Form::close() !!}
+
+			{!! Form::open(['method' => 'POST', 'route' => ['device.indexOrder'], 'id' => 'order_by']) !!}
+				<select name="orderby" class="btn pull-right" onchange="document.getElementById('order_by').submit();">
+					<option value="id" <?php if($_SESSION['orderby']=='id'){echo 'selected';} ?> >Id</option>
+					<option value="user_name" <?php if($_SESSION['orderby']=='user_name'){echo 'selected';} ?> >User</option>
+					<option value="device_name" <?php if($_SESSION['orderby']=='device_name'){echo 'selected';} ?> >Device</option>
+					<option value="category" <?php if($_SESSION['orderby']=='category'){echo 'selected';} ?> >Category</option>
+				</select>
+				<label class="pull-right"> Order by : </label>
+			{!! Form::close() !!}
 			<table class="table table-bordered">
 				<thead>
 					<tr>
@@ -47,7 +65,7 @@
 					@endforeach
 	  			</tbody>
 			</table>
-			{{ $devices->appends(Request::except('page'))->links() }}
+			{{ $devices->appends(Request::except(['page', '_token']))->links() }}
 			</div>
 		</div>
 		

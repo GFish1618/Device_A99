@@ -25,7 +25,7 @@ class DevicesUpdateRequest extends Request
     {
         return [
             'user_name' => 'required',
-            'device_name' => 'required',//'unique:devices',
+            'device_name' => 'required',
             'mac_adress' => 'min:17|max:17|regex:#([a-fA-F0-9]{2}:){5}[a-f0-9]{2}#',
             'ownership' => 'required',
             'unit_sn' => 'regex:#[^a-z]#',

@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers\Auth;
 
+session_start();
+$_SESSION['nbp'] = 5;
+$_SESSION['orderby'] = 'id';
+$_SESSION['search_crit'] = array();
+
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 use App\SocialProvider;
 use App\User;
+use \Google_Client; 
+use \Google_Service_Drive;
 
 use Socialite;
+use Excel;
 
 class LoginController extends Controller
 {
@@ -68,12 +76,34 @@ class LoginController extends Controller
             return redirect('/');
         }
 
-        /*if (! preg_match("/@august99.com$/", $socialUser->getEmail()))
+        $userg = new Google_Client();
+        $userg->setAuthConfig(env('GOOGLE_API_KEY'));
+        //$userg->setAccessToken($socialUser->token);
+
+        $userg->setAccessToken([
+          'access_token' => $socialUser->token,
+          'expires_in'   => 3600,
+          'created'      => time(),
+        ]);
+
+        //echo($socialUser->token);
+
+        $service = new Google_Service_Drive($userg);
+
+        $fileId = '11l8tmiujIogsLaRWbU-bg-57Brp3Vr6gP8SJc3ha42Y';
+        $response = $service->files->export($fileId, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', array('alt' => 'media' ));
+        $content = $response->getBody()->getContents();
+
+        $file = fopen('test.xlsx', 'w');
+        fwrite($file, $content);
+        fclose($file);
+
+        if (! preg_match("/@august99.com$/", $socialUser->getEmail()))
         {
             return redirect('/login')->withOk("Invalid Email");
         }
         else
-        {*/
+        {
             $socialProvider = SocialProvider::where('provider_id', $socialUser->getId())->first();
             if (!$socialProvider)
             {
@@ -86,6 +116,8 @@ class LoginController extends Controller
                 if ($user->nickname == ''){$user->nickname = $user->name;}
                 $user->avatar = $socialUser->getAvatar();
                 $user->admin = 0;
+
+                $user->remember_token = $socialUser->token;
         
                 $user->save();
 
@@ -99,12 +131,14 @@ class LoginController extends Controller
             {
                 $user = $socialProvider->user;
                 $user->avatar = $socialUser->getAvatar();
+                $user->remember_token = $socialUser->token;
+
+                $user->save();
             }
             auth()->login($user);
             return redirect('/device')->withOk("Access granted");
-        //}
+        }
         
-
         return redirect('/login')->withOk("Access refused, wait for admin");
     }
 }

@@ -5,6 +5,9 @@
     	@if(session()->has('ok'))
 			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
 		@endif
+		@if(session()->has('error'))
+			<div class="alert alert-danger alert-dismissible">{!! session('error') !!}</div>
+		@endif
 		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<h3 class="panel-title">Users list</h3>

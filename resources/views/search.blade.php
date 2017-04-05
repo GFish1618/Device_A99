@@ -5,6 +5,12 @@
 
 @section('content')
 	<div class="col-sm-offset-2 col-sm-4">
+		@if(session()->has('ok'))
+			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
+		@endif
+		@if(session()->has('error'))
+			<div class="alert alert-danger alert-dismissible">{!! session('error') !!}</div>
+		@endif
 		<div class="panel panel-primary">	
 			<div class="panel-heading"><h3 class="panel-title">Search for device</h3></div>
 			<div class="panel-body"> 
@@ -51,6 +57,16 @@
 						{!! $errors->first('mouse_sn', '<small class="help-block">:message</small>') !!}
 					</div>
 
+					<div class="form-group {!! $errors->has('charger_sn') ? 'has-error' : '' !!}">
+						{!! Form::text('charger_sn', null, ['class' => 'form-control', 'placeholder' => 'Charger S/N']) !!}
+						{!! $errors->first('charger_sn', '<small class="help-block">:message</small>') !!}
+					</div>
+
+					<div class="form-group {!! $errors->has('charger_version') ? 'has-error' : '' !!}">
+						{!! Form::text('charger_version', null, ['class' => 'form-control', 'placeholder' => 'Charger version']) !!}
+						{!! $errors->first('charger_version', '<small class="help-block">:message</small>') !!}
+					</div>
+
 					<div class="form-group">
 						<div class="checkbox">
 							<label>
@@ -60,6 +76,16 @@
 						<div class="checkbox">
 							<label>
 								{!! Form::checkbox('external_mon_cable', 1, null) !!} External monitor cable
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								{!! Form::checkbox('charger', 1, null) !!} Charger
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								{!! Form::checkbox('laptop_sleeve', 1, null) !!} Laptop sleeve
 							</label>
 						</div>
 					</div>
@@ -75,7 +101,8 @@
 					</div>
 
 					<div class="form-group {!! $errors->has('purchased_date') ? 'has-error' : '' !!}">
-						{!! Form::date('purchased_date', null, ['class' => 'form-control', 'placeholder' => 'Purchased date']) !!}
+						{!! Form::label('Purchased date') !!}
+						{!! Form::date('purchased_date', '00/00/0000') !!}
 						{!! $errors->first('purchased_date', '<small class="help-block">:message</small>') !!}
 					</div>
 
@@ -92,11 +119,6 @@
 					<div class="form-group {!! $errors->has('department') ? 'has-error' : '' !!}">
 						{!! Form::text('department', null, ['class' => 'form-control', 'placeholder' => 'Department']) !!}
 						{!! $errors->first('department', '<small class="help-block">:message</small>') !!}
-					</div>
-
-					<div class="form-group {!! $errors->has('orderby') ? 'has-error' : '' !!}">
-						{!! Form::select('orderby', ['id' => 'Order By', 'user_name' => 'User name', 'device_name' => 'Device name', 'category' => 'Categories', 'purchased_date' => 'Purchased Date', 'current_location' => 'Current Location'], null, ['class' => 'form-control']) !!}
-						{!! $errors->first('orderby', '<small class="help-block">:message</small>') !!}
 					</div>
 
 					{!! Form::submit('Search', ['class' => 'btn btn-primary pull-right']) !!}

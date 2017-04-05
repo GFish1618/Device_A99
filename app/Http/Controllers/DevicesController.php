@@ -1,21 +1,26 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+session_start();
 
+use Illuminate\Http\Request;
 
 use App\Http\Requests\Devices\DevicesCreateRequest;
 use App\Http\Requests\Devices\DevicesUpdateRequest;
 use App\Http\Requests\Devices\DevicesSearchRequest;
 use App\Http\Requests\Devices\DevicesCategoryRequest;
 use App\Http\Requests\Devices\DevicesImportRequest;
+use App\Http\Requests\Devices\DevicesIndexRequest;
 
 use App\Repositories\DeviceRepository;
 use App\Repositories\FileRepository;
 
 use Excel;
-
+use Socialite;
+use User;
+use Auth;
+use \Google_Client; 
+use \Google_Service_Drive;
 
 
 class DevicesController extends Controller
@@ -23,6 +28,7 @@ class DevicesController extends Controller
  
 	protected $deviceRepository;
 	protected $nbrPerPage = 5;
+    protected $orderby = 'id';
 
 	public function __construct(DeviceRepository $deviceRepository)
     {
@@ -38,8 +44,15 @@ class DevicesController extends Controller
      */
     public function index()
     {
+        $nbrPerPage = $this->nbrPerPage;
+        $orderby = $this->orderby;
 
-        $devices = $this->deviceRepository->getPaginate($this->nbrPerPage);
+        if(isset($_SESSION['nbp']))
+            $nbrPerPage = $_SESSION['nbp'];
+        if(isset($_SESSION['orderby']))
+            $orderby = $_SESSION['orderby'];
+        
+        $devices = $this->deviceRepository->getPaginate($nbrPerPage, $orderby);
 
 		return view('index', compact('devices'));
     }
@@ -51,7 +64,7 @@ class DevicesController extends Controller
      */
     public function create()
     {
-        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
         return view('create');
     }
@@ -64,11 +77,15 @@ class DevicesController extends Controller
      */
     public function store(DevicesCreateRequest $request)
     {
-        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $device = $this->deviceRepository->store($request->all());
+        $response = $this->deviceRepository->store($request->all());
 
-		return redirect('device')->withOk("The device: " . $device->device_name . " was created");
+        if ($response['success']=='true')
+            return redirect('device')->withOk("The device: " . $response['name'] . " was created");
+        else
+            return redirect('/device/'.$response['sibling'])->withError("This device already exists, see below");
+
     }
 
     /**
@@ -92,7 +109,7 @@ class DevicesController extends Controller
      */
     public function edit($id)
     {
-        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
         $device = $this->deviceRepository->getById($id);
 
@@ -108,7 +125,7 @@ class DevicesController extends Controller
      */
     public function update(DevicesUpdateRequest $request, $id)
     {
-        if(auth()->user()->admin < 1) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
         $this->deviceRepository->update($id, $request->all());
 		
@@ -123,7 +140,7 @@ class DevicesController extends Controller
      */
     public function destroy($id)
     {
-        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You are not allowed to delete");}
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("You are not allowed to delete");}
         $this->deviceRepository->destroy($id);
 
 		return back();
@@ -131,17 +148,10 @@ class DevicesController extends Controller
 
     public function reset()
     {
-        echo("<pre>__
-##|_          hmmm, 'press to reset'!
-##| |    _  .' ...wonder if that's for real??
-##| D- o')            __
-##|_| \.\",         -=(o '.
-##|     ||_           '.-.\
-##|    .\".            /|  \\\\
-##|   _|_|            '|  ||
------------------------_\_):,_------</pre>");
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("Nice try, but you are not allowed to reset the database");}
+        
         $this->deviceRepository->reset();
-        return back();
+        return redirect('device')->withOk("The database was deleted");
     }
 
     public function search()
@@ -149,18 +159,38 @@ class DevicesController extends Controller
         return view('search');
     }
 
-    public function display(DevicesSearchRequest $request)
+    public function display(DevicesSearchRequest $request_receive)
     {
-        $devices = $this->deviceRepository->search($request->all(), $this->nbrPerPage, $request->all()['orderby']);
+        $nbrPerPage = $this->nbrPerPage;
+        $orderby = $this->orderby;
 
-        $links = $devices->render();
+        if(isset($_SESSION['nbp']))
+            $nbrPerPage = $_SESSION['nbp'];
+        if(isset($_SESSION['orderby']))
+            $orderby = $_SESSION['orderby'];
 
-        return view('index', compact('devices', 'links'));
+        $request = $request_receive->all();
+        if($request!=Array())
+            $_SESSION['search_crit'] = $request;
+        else
+            $request = $_SESSION['search_crit'];
+
+        $devices = $this->deviceRepository->search($request, $nbrPerPage, $orderby);
+
+        return view('index', compact('devices'));
     }
 
     public function category($cat)
     {
-        $devices = $this->deviceRepository->search(['category' => $cat], $this->nbrPerPage);
+        $nbrPerPage = $this->nbrPerPage;
+        $orderby = $this->orderby;
+
+        if(isset($_SESSION['nbp']))
+            $nbrPerPage = $_SESSION['nbp'];
+        if(isset($_SESSION['orderby']))
+            $orderby = $_SESSION['orderby'];
+
+        $devices = $this->deviceRepository->search(['category' => $cat], $nbrPerPage, $orderby);
 
         $links = $devices->render();
 
@@ -169,36 +199,117 @@ class DevicesController extends Controller
 
     public function exportxls()
     {
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
+
         $this->deviceRepository->export();
     }
 
     public function importxls(DevicesImportRequest $request)
     {
-        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
+        echo $request->all()['file']."<br>";
         if($this->deviceRepository->verifxls($request->all()['file']))
         {
-
             $this->deviceRepository->import($request->all()['file']);
             return redirect('/device')->withOk("File data added");
         }
         else
         {
-            return redirect('/device/import')->withOk("Incorrect file columns");
+            return redirect('/device/import')->withError("Incorrect file columns");
         }
+    }
+
+    public function import_gdrive()
+    {
+        $path = 'gpaenkordecidelenom';
+
+
+        /*$client = new Google_Client();
+        $client->setAuthConfig(env('GOOGLE_API_KEY'));
+        $client->setApprovalPrompt('force');
+        $client->addScope("https://www.googleapis.com/auth/drive");
+
+        $service = new Google_Service_Drive($client);
+
+
+        if (isset($_GET['code'])) {
+            $client->authenticate($_GET['code']);
+            $_SESSION['upload_token'] = $client->getAccessToken();
+            $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+            header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+        }
+        else{
+            echo 'truc';
+        }
+
+        if (isset($_SESSION['upload_token']) && $_SESSION['upload_token']) {
+            $client->setAccessToken($_SESSION['upload_token']);
+            if ($client->isAccessTokenExpired()) {
+                unset($_SESSION['upload_token']);
+            }
+        }
+        else{
+            echo 'machin';
+        }
+
+        if ($client->getAccessToken()) {
+            $fileId = '11l8tmiujIogsLaRWbU-bg-57Brp3Vr6gP8SJc3ha42Y';
+            $response = $service->files->export($fileId, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', array('alt' => 'media' ));
+            $content = $response->getBody()->getContents();
+        }
+        else{
+            echo 'rien';
+        }*/
+
+        $userg = new Google_Client();
+        $userg->setAuthConfig(env('GOOGLE_API_KEY'));
+        $userg->addScope("https://www.googleapis.com/auth/drive.readonly");
+
+        //$userg->setAccessToken($socialUser->token);
+
+        $userg->setAccessToken([
+          'access_token' => auth()->user()->remember_token,
+          'expires_in'   => 3600,
+          'created'      => time(),
+        ]);
+
+        //echo($socialUser->token);
+
+        $service = new Google_Service_Drive($userg);
+
+        $fileId = '11l8tmiujIogsLaRWbU-bg-57Brp3Vr6gP8SJc3ha42Y';
+        $response = $service->files->export($fileId, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', array('alt' => 'media' ));
+        $content = $response->getBody()->getContents();
+
+        //$file = fopen('test.xls', 'w');
+        //fwrite($file, $content);
+        //fclose($file);
         
+        /*if($this->deviceRepository->verifxls($path))
+        {
+
+            $this->deviceRepository->import($path);
+            return redirect('/device')->withOk("Gdrive data added");
+        }
+        else
+        {
+            return redirect('/device/import')->withError("Incorrect file columns");
+        }*/
+
+        return back();
     }
 
     public function addCategoryForm()
     {
-        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
         return view('addCategory');
     }
 
     public function addCategoryPost(DevicesCategoryRequest $request)
     {
-        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
         $test = $request->all();
         FileRepository::addCategory(strtolower($test['new_category']));
@@ -207,10 +318,26 @@ class DevicesController extends Controller
 
     public function deleteCategory(DevicesCategoryRequest $request)
     {
-        if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
+        if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
         $test = $request->all();
         FileRepository::deleteCategory(strtolower($test['category']));
         return redirect('admin/categories')->withOk('The category '.$test['category'].' was deleted');
+    }
+
+    public function itemPerPages(DevicesIndexRequest $request)
+    {
+        $_SESSION['nbp'] = $request->all()['nbp'];
+
+        return redirect()->to($this->getRedirectUrl())
+                    ->withInput($request->input());
+    }
+
+    public function orderByChange(DevicesIndexRequest $request)
+    {
+        $_SESSION['orderby'] = $request->all()['orderby'];
+
+        return redirect()->to($this->getRedirectUrl())
+                    ->withInput($request->input());
     }
 }

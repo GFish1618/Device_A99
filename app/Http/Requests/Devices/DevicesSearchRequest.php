@@ -25,7 +25,7 @@ class DevicesSearchRequest extends Request
     {
         return [
             'user_name' => '',
-            'device_name' => '',//'unique:devices',
+            'device_name' => '',
             'mac_adress' => 'min:17|max:17|regex:#([a-f0-9]{2}:){5}[a-f0-9]{2}#',
             'ownership' => '',
             'unit_sn' => 'regex:#[^a-z]#',

@@ -26,8 +26,12 @@ class DeviceRepository
 		$device->unit_sn = $inputs['unit_sn'];
 		$device->keyboard_sn = $inputs['keyboard_sn'];
 		$device->mouse_sn = $inputs['mouse_sn'];
+		$device->charger_sn = $inputs['charger_sn'];
+		$device->charger_version = $inputs['charger_version'];
 		$device->external_monitor = isset($inputs['external_monitor']);
 		$device->external_mon_cable = isset($inputs['external_mon_cable']);
+		//$device->charger = isset($inputs['charger']);
+		$device->laptop_sleeve = isset($inputs['laptop_sleeve']);
 		$device->installed_memory = $inputs['installed_memory'];
 		$device->core_speed = $inputs['core_speed'];
 
@@ -42,22 +46,31 @@ class DeviceRepository
 		$device->department = $inputs['department'];
 		$device->remarks = $inputs['remarks'];
 
-		$device->save();
+		$siblings = $this->findSiblings($device);
+		if ($siblings->first() != null)
+		{
+			return ['success' => 'false', 'sibling' => $siblings->first()->id];
+		}
+		else
+		{
+			$device->save();
+			return ['success' => 'true'];
+		}
 	}
 
 	public function getPaginate($n, $orderby = 'id')
 	{
-		return $this->device->paginate($n);//->orderBy('username');
+		return $this->device->orderBy($orderby)->paginate($n);
 	}
 
 	public function store(Array $inputs)
 	{
 		$device = new $this->device;		
-		//$device->password = bcrypt($inputs['password']);
+		
+		$response = $this->save($device, $inputs);
+		$response += ['name' => $device->device_name];
 
-		$this->save($device, $inputs);
-
-		return $device;
+		return $response;
 	}
 
 	public function getById($id)
@@ -77,6 +90,16 @@ class DeviceRepository
 
 	public function reset()
 	{
+		echo("<pre>__
+##|_          hmmm, 'press to reset'!
+##| |    _  .' ...wonder if that's for real??
+##| D- o')            __
+##|_| \.\",         -=(o '.
+##|     ||_           '.-.\
+##|    .\".            /|  \\\\
+##|   _|_|            '|  ||
+-----------------------_\_):,_------</pre>");
+
 		$devices = $this->device->where('id', '>=', '0');
 		
 		while ($devices->first() != null)
@@ -113,11 +136,23 @@ class DeviceRepository
 		if (isset($inputs['mouse_sn']) and $inputs['mouse_sn']!=''){
 			$device = $device->where('mouse_sn', 'like', '%'.$inputs['mouse_sn'].'%');
 		}
+		if (isset($inputs['charger_sn']) and $inputs['charger_sn']!=''){
+			$device = $device->where('charger_sn', 'like', '%'.$inputs['charger_sn'].'%');
+		}
+		if (isset($inputs['charger_version']) and $inputs['charger_version']!=''){
+			$device = $device->where('charger_version', 'like', '%'.$inputs['charger_version'].'%');
+		}
 		if (isset($inputs['external_monitor']) and $inputs['external_monitor']!=''){
 			$device = $device->where('external_monitor', 'like', '%'.$inputs['external_monitor'].'%');
 		}
 		if (isset($inputs['external_mon_cable']) and $inputs['external_mon_cable']!=''){
 			$device = $device->where('external_mon_cable', 'like', '%'.$inputs['external_mon_cable'].'%');
+		}
+		//if (isset($inputs['charger']) and $inputs['charger']!=''){
+		//	$device = $device->where('charger', 'like', '%'.$inputs['charger'].'%');
+		//}
+		if (isset($inputs['laptop_sleeve']) and $inputs['laptop_sleeve']!=''){
+			$device = $device->where('laptop_sleeve', 'like', '%'.$inputs['laptop_sleeve'].'%');
 		}
 		if (isset($inputs['installed_memory']) and $inputs['installed_memory']!=''){
 			$device = $device->where('installed_memory', 'like', '%'.$inputs['installed_memory'].'%');
@@ -137,7 +172,7 @@ class DeviceRepository
 		if (isset($inputs['department']) and $inputs['department']!=''){
 			$device = $device->where('department', 'like', '%'.$inputs['department'].'%');
 		}
-		if (isset($inputs['orderby'])){$orderby=$inputs['orderby'];}
+		//if (isset($inputs['orderby'])){$orderby=$inputs['orderby'];}
 		return $device->orderBy($orderby)->paginate($n);
 	}
 
@@ -147,9 +182,6 @@ class DeviceRepository
 		$device = $device
 			->where('user_name', $compare_device->user_name)
 			->where('device_name', $compare_device->device_name);
-
-		if ($compare_device->category!='')
-			$device = $device->where('category', $compare_device->category);
 
 		if ($compare_device->unit_sn!='')
 			$device = $device->where('unit_sn', $compare_device->unit_sn);
@@ -173,8 +205,11 @@ class DeviceRepository
 						'Unit S/N',
 						'Keyboard S/N',
 						'Mouse S/N',
+						'Charger S/N',
+						'Charger model',
        					'External monitor',
        					'External monitor cable',
+       					'Laptop sleeve',
        					'Installed memory',
        					'Core speed',
        					'Purchased date',
@@ -198,8 +233,11 @@ class DeviceRepository
        					$row->unit_sn,
        					$row->keyboard_sn,
        					$row->mouse_sn,
+       					$row->charger_sn,
+       					$row->charger_version,
        					$row->external_monitor,
        					$row->external_mon_cable,
+       					$row->laptop_sleeve,
        					$row->installed_memory,
        					$row->core_speed,
        					$row->purchased_date,
@@ -216,10 +254,10 @@ class DeviceRepository
 
 	public function verifxls($filePath)
 	{
-		if (!preg_match("/.xlsx?$/", $filePath))
+		/*if (!preg_match("/\.xlsx?$/", $filePath->originalName()))
         {
-            return redirect('/device/import')->withOk("Incorrect file extension");
-        }
+            return redirect('/device/import')->withError("Incorrect file extension");
+        }*/
 		try{
 		$data = Excel::load($filePath, function($reader) {
 	    	})->get();
@@ -254,6 +292,7 @@ class DeviceRepository
 
 		    		$device = new $this->device;
 
+
 		    		if ( (isset($inputs->name) and $inputs->name!=null) and (isset($inputs->device_name) and $inputs->device_name!=null) )
 		    		{
 			    		$device->user_name = $inputs->name;
@@ -271,10 +310,31 @@ class DeviceRepository
 			    			$device->keyboard_sn = $inputs->keyboard_sn;
 			    		if ($inputs->mouse_sn!=null)
 			    			$device->mouse_sn = $inputs->mouse_sn;
+			    		if ($inputs->charger_sn!=null)
+			    			$device->charger_sn = $inputs->charger_sn;
+			    		if ($inputs->charger_model!=null)
+			    			$device->charger_version = $inputs->charger_model;
 			    		if ($inputs->external_monitor!=null)
-			    			$device->external_monitor = $inputs->external_monitor;
+			    		{
+			    			if ($inputs->external_monitor=='Yes' or $inputs->external_monitor=='1')
+			    				$device->external_monitor = true;
+			    			else
+			    				$device->external_monitor = false;
+			    		}
 			    		if ($inputs->external_monintor_cable!=null)
-			    			$device->external_mon_cable = $inputs->external_monitor_cable;
+			    		{
+			    			if ($inputs->external_monitor_cable=='Yes' or $inputs->external_monitor_cable=='1')
+			    				$device->external_mon_cable = true;
+			    			else
+			    				$device->external_mon_cable = false;
+			    		}
+			    		if ($inputs->laptop_sleeves!=null)
+			    		{
+			    			if ($inputs->laptop_sleeves=='Yes' or $inputs->laptop_sleeves=='1')
+			    				$device->laptop_sleeve = true;
+			    			else
+			    				$device->laptop_sleeve = false;
+			    		}
 			    		if ($inputs->installed_memory!=null)
 			    			$device->installed_memory = $inputs->installed_memory;
 			    		if ($inputs->core_speed!=null)

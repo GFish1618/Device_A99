@@ -16,7 +16,12 @@
     <!-- Styles -->
     <link href="{{url('/css/app.css')}}" rel="stylesheet">
     <link href="{{url('/css/profile_card.css')}}" rel="stylesheet">
-     <link href="{{url('/css/breadcrumbs.css')}}" rel="stylesheet">
+    <link href="{{url('/css/breadcrumbs.css')}}" rel="stylesheet">
+
+
+    <link rel="shortcut icon" href="{{url('/logo899.ico')}}" type="image/x-icon"/> 
+    <link rel="icon" href="{{url('/logo899.ico')}}" type="image/x-icon"/>
+
 
 
     <!-- Scripts -->
@@ -73,7 +78,7 @@
                                             Search
                                         </a>
 
-                                        @if (Auth::user()->admin == 2)
+                                        @if (Auth::user()->admin >= 1)
                                         <a href="{{ route('device.create') }}">
                                             Add a device
                                         </a>
@@ -82,29 +87,20 @@
                                         <a href="/EquipmentReleaseResponsibilityForm.docx">
                                             Download <br>Responsability Form
                                         </a>
-                                        
+
+                                        @if (Auth::user()->admin == 2)                                        
                                         <a href="{{ route('device.exportxls') }}">
                                             Export to excel
                                         </a>
 
-                                        @if (Auth::user()->admin == 2)
                                         <a href="{{ url('device/import') }}">
                                             Import from excel
                                         </a>
 
-                                            <SCRIPT LANGUAGE="JavaScript"> 
-                                            function confirmation() {  
-                                                if (confirm("Are you really sure you want to reset the database?")){
-                                                    if (confirm("Like really REALLY sure?")){
-                                                        location.replace("{{route('device.reset')}}"); 
-                                                    }
-                                                } 
-                                            }
-                                            </SCRIPT> 
-
-                                        <a href="#" onclick="confirmation();">
-                                            Reset database
+                                        <a href="{{ url('device/gdrive') }}">
+                                            Import from <br>Google Drive
                                         </a>
+
                                         @endif
 
                                     </li>
@@ -124,6 +120,20 @@
                                         </a>
                                         <a href="{{ url('/admin/categories') }}">
                                             Categories
+                                        </a>
+
+                                            <SCRIPT LANGUAGE="JavaScript"> 
+                                            function confirmation() {  
+                                                if (confirm("Are you really sure you want to reset the database?")){
+                                                    if (confirm("Like really REALLY sure?")){
+                                                        location.replace("{{route('device.reset')}}"); 
+                                                    }
+                                                } 
+                                            }
+                                            </SCRIPT> 
+
+                                        <a href="#" onclick="confirmation();">
+                                            Reset database
                                         </a>
 
                                     </li>
@@ -155,6 +165,7 @@
                 </div>
             </div>
         </nav>
+
 
         @if (!Auth::guest())
         <div class="container-fluid">
@@ -192,7 +203,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="bottom">
+                <!--<div class="bottom">
                     <a class="btn btn-primary btn-twitter btn-sm" href="https://twitter.com/webmaniac">
                         <i class="fa fa-twitter"></i>
                     </a>
@@ -207,7 +218,7 @@
                     <a class="btn btn-warning btn-sm" rel="publisher" href="https://plus.google.com/shahnuralam">
                         <i class="fa fa-behance"></i>
                     </a>
-                </div>
+                </div>-->
             </div>
         
 
@@ -230,7 +241,45 @@
         </div>
     </div>
         @endif
+        <ol class="breadcrumb breadcrumb-arrow">
+            @if (preg_match("/\/device/", $_SERVER['REQUEST_URI']))
+            <li><a href="/">Devices</a></li>
+                @if (preg_match("/\/category\//", $_SERVER['REQUEST_URI']))
+                <li><a href="#">Category</a></li>
+                    <?php
+                        $line=0;
+                        while ($line<FileRepository::length()-1)
+                        {
+                            $txtline = FileRepository::readLine($line);
+                            $txtline = substr($txtline, 0, -1);
+                            if (preg_match("/\/".$txtline."/", $_SERVER['REQUEST_URI']))
+                            {
+                                echo('<li><a href="#">'.$txtline.'</a></li>');
+                            }
+                            $line++;
+                        }
+                    ?>
+                @endif
+                @if (preg_match("/\/search\//", $_SERVER['REQUEST_URI']))
+                <li><a href="{{route('device.search')}}">Search</a></li>
+                    @if (preg_match("/\/display/", $_SERVER['REQUEST_URI']))
+                    <li><a class="active">Display</a></li>
+                    @endif
+                @endif
+            @endif
+
+            @if (preg_match("/\/admin/", $_SERVER['REQUEST_URI']))
+            <li><a href="{{route('admin.index')}}">Admin</a></li>
+                @if (preg_match("/\/categories/", $_SERVER['REQUEST_URI']))
+                <li><a href="{{route('device.addCatF')}}">Categories</a></li>
+                @else
+                <li><a href="{{route('admin.index')}}">Users</a></li>
+                @endif
+            @endif
+
+        </ol>
         @yield('content')
+        
         
 
     <!-- Scripts -->

@@ -10,9 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('device/search', 'DevicesController@search')->name('device.search');
-Route::post('device/display', 'DevicesController@display')->name('device.display');
-Route::get('device/display', 'DevicesController@display');
+Route::get('device/search/option', 'DevicesController@search')->name('device.search');
+Route::post('device/search/display', 'DevicesController@display')->name('device.display');
+Route::get('device/search/display', 'DevicesController@display');
 
 Route::get('device/category/{cat}', 'DevicesController@category')->name('device.category');
 
@@ -22,16 +22,20 @@ Route::get('device/52830473571418', 'DevicesController@reset')->name('device.res
 Route::get('device/import', function (){ return view('import'); });
 Route::post('device/import', 'DevicesController@importxls')->name('device.importxls');
 
+Route::get('device/gdrive', 'DevicesController@import_gdrive');
+
 Route::get('admin/categories', 'DevicesController@addCategoryForm')->name('device.addCatF');
 Route::post('admin/categories', 'DevicesController@addCategoryPost')->name('device.addCatP');
 Route::post('admin/categories/del', 'DevicesController@deleteCategory')->name('device.deleteCat');
 
+Route::post('device/indexPage', 'DevicesController@itemPerPages')->name('device.indexPage');
+Route::post('device/indexOrder', 'DevicesController@orderByChange')->name('device.indexOrder');
+
 Route::resource('device', 'DevicesController');
 
-
-Route::get('admin/search', 'UsersController@search')->name('admin.search');
-Route::post('admin/display', 'UsersController@display')->name('admin.display');
-Route::get('admin/display', 'UsersController@display');
+Route::get('admin/search/option', 'UsersController@search')->name('admin.search');
+Route::post('admin/search/display', 'UsersController@display')->name('admin.display');
+Route::get('admin/search/display', 'UsersController@display');
 Route::resource('admin', 'UsersController');
 
 Auth::routes();

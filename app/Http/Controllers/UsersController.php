@@ -14,7 +14,7 @@ class UsersController extends Controller
 {
  
 	protected $usersRepository;
-	protected $nbrPerPage = 7;
+	protected $nbrPerPage = 5;
 
 	public function __construct(UsersRepository $usersRepository)
     {
@@ -129,9 +129,9 @@ class UsersController extends Controller
 
     }
 
-    public function GetForm()
+    // To delete in final version (auto fill of the form)
+    /*public function GetForm()
     {
-
         $file='EquipmentReleaseResponsibilityFormTemplate.rtf';
         $newFile='EquipmentReleaseResponsibilityForm.rtf';
 
@@ -143,5 +143,5 @@ class UsersController extends Controller
         $text2=fopen($newFile,'w+') or die("File missing"); 
         fwrite($text2,$contentMod); 
         fclose($text2);
-    }
+    }*/
 }
