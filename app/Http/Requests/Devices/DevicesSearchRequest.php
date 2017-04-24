@@ -25,22 +25,7 @@ class DevicesSearchRequest extends Request
     {
         return [
             'user_name' => '',
-            'device_name' => '',
-            'mac_adress' => 'min:17|max:17|regex:#([a-f0-9]{2}:){5}[a-f0-9]{2}#',
-            'ownership' => '',
-            'unit_sn' => 'regex:#[^a-z]#',
-            'keyboard_sn' => 'regex:#[^a-z]#',
-            'mouse_sn' => 'regex:#[^a-z]#',
-            'external_monitor' => '',
-            'external_mon_cable' => '',
-            'installed_memory' => '',
-            'core_speed' => '',
-            'purchased_date' => 'date',
-            'current_location' => '',
-            'password' => '',
-            'os_version' => '',
-            'department' => '',
-            'remarks' => '',
+            'device_name' => ''
         ];
     }
 }

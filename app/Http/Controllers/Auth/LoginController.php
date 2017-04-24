@@ -10,6 +10,8 @@ $_SESSION['search_crit'] = array();
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
+use App\Repositories\GoogleAuth;
+
 use App\SocialProvider;
 use App\User;
 use \Google_Client; 
@@ -57,7 +59,10 @@ class LoginController extends Controller
      */
     public function redirectToProvider()
     {
-        return Socialite::driver('google')->redirect();
+        $googleClient = new Google_Client();
+        $googleAuth = new GoogleAuth($googleClient);
+
+        return redirect($googleAuth->getAuthUrl());
     }
 
     /**
@@ -67,78 +72,66 @@ class LoginController extends Controller
      */
     public function handleProviderCallback()
     {
-        try
+        $googleClient = new Google_Client();
+        $googleAuth = new GoogleAuth($googleClient);
+
+        if($googleAuth->checkRedirectCode())
         {
-            $socialUser = Socialite::driver('google')->user();
-        }
-        catch(\Exception $e)
-        {
-            return redirect('/');
-        }
+            
+            $socialUser = $googleAuth->getProfile();
 
-        $userg = new Google_Client();
-        $userg->setAuthConfig(env('GOOGLE_API_KEY'));
-        //$userg->setAccessToken($socialUser->token);
-
-        $userg->setAccessToken([
-          'access_token' => $socialUser->token,
-          'expires_in'   => 3600,
-          'created'      => time(),
-        ]);
-
-        //echo($socialUser->token);
-
-        $service = new Google_Service_Drive($userg);
-
-        $fileId = '11l8tmiujIogsLaRWbU-bg-57Brp3Vr6gP8SJc3ha42Y';
-        $response = $service->files->export($fileId, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', array('alt' => 'media' ));
-        $content = $response->getBody()->getContents();
-
-        $file = fopen('test.xlsx', 'w');
-        fwrite($file, $content);
-        fclose($file);
-
-        if (! preg_match("/@august99.com$/", $socialUser->getEmail()))
-        {
-            return redirect('/login')->withOk("Invalid Email");
-        }
-        else
-        {
-            $socialProvider = SocialProvider::where('provider_id', $socialUser->getId())->first();
-            if (!$socialProvider)
+            if (! preg_match("/@august99.com$/", $socialUser['email']))
             {
-                $user = User::firstOrCreate(
-                    ['email' => $socialUser->getEmail()],
-                    ['name' => $socialUser->getName()]
-                );
-
-                $user->nickname = $socialUser->getNickname();
-                if ($user->nickname == ''){$user->nickname = $user->name;}
-                $user->avatar = $socialUser->getAvatar();
-                $user->admin = 0;
-
-                $user->remember_token = $socialUser->token;
-        
-                $user->save();
-
-                $user->socialProviders()->create(
-                    ['provider_id' => $socialUser->getId(), 'provider' => 'google']
-                );
-                auth()->login($user);
-                auth()->logout($user);
+                return redirect('/login')->withOk("Invalid Email");
             }
             else
             {
-                $user = $socialProvider->user;
-                $user->avatar = $socialUser->getAvatar();
-                $user->remember_token = $socialUser->token;
+                $socialProvider = SocialProvider::where('provider_id', $socialUser['id'])->first();
+                if (!$socialProvider)
+                {
+                    $user = User::firstOrCreate(
+                        ['email' => $socialUser['email']],
+                        ['name' => $socialUser['name']]
+                    );
 
-                $user->save();
+                    if (isset($socialUser['nickname']))
+                    {
+                        $user->nickname = $socialUser['nickname'];
+                    }
+                    else
+                    {
+                        $user->nickname = $user->name;
+                    }
+
+                    $user->avatar = $socialUser['picture'];
+                    $user->admin = 0;
+
+                    //$user->remember_token = $socialAuth->client->getRefreshToken();
+            
+                    $user->save();
+
+                    $user->socialProviders()->create(
+                        ['provider_id' => $socialUser['id'], 'provider' => 'google']
+                    );
+                    auth()->login($user);
+                    auth()->logout($user);
+                }
+                else
+                {
+                    $user = $socialProvider->user;
+                    $user->avatar = $socialUser['picture'];
+                    //$user->remember_token = $googleAuth->client->getRefreshToken();
+
+                    $user->save();
+                }
+                auth()->login($user);
+                return redirect('/device')->withOk("Access granted");
             }
-            auth()->login($user);
-            return redirect('/device')->withOk("Access granted");
+            
+            return redirect('/login')->withOk("Access refused, wait for admin");
+
         }
-        
-        return redirect('/login')->withOk("Access refused, wait for admin");
     }
+
+    
 }

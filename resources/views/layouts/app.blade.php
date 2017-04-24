@@ -22,6 +22,7 @@
     <link rel="shortcut icon" href="{{url('/logo899.ico')}}" type="image/x-icon"/> 
     <link rel="icon" href="{{url('/logo899.ico')}}" type="image/x-icon"/>
 
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/smoothness/jquery-ui.css" />
 
 
     <!-- Scripts -->
@@ -74,15 +75,6 @@
                                         <a href="{{ url('device') }}">
                                             Home
                                         </a>
-                                        <a href="{{ route('device.search') }}">
-                                            Search
-                                        </a>
-
-                                        @if (Auth::user()->admin >= 1)
-                                        <a href="{{ route('device.create') }}">
-                                            Add a device
-                                        </a>
-                                        @endif
 
                                         <a href="/EquipmentReleaseResponsibilityForm.docx">
                                             Download <br>Responsability Form
@@ -93,11 +85,11 @@
                                             Export to excel
                                         </a>
 
-                                        <a href="{{ url('device/import') }}">
+                                        <a href="{{ route('device.importxls') }}">
                                             Import from excel
                                         </a>
 
-                                        <a href="{{ url('device/gdrive') }}">
+                                        <a href="{{ route('device.gdrive') }}">
                                             Import from <br>Google Drive
                                         </a>
 
@@ -118,19 +110,9 @@
                                         <a href="{{ url('/admin') }}">
                                             Users
                                         </a>
-                                        <a href="{{ url('/admin/categories') }}">
+                                        <a href="{{ route('categories.index') }}">
                                             Categories
                                         </a>
-
-                                            <SCRIPT LANGUAGE="JavaScript"> 
-                                            function confirmation() {  
-                                                if (confirm("Are you really sure you want to reset the database?")){
-                                                    if (confirm("Like really REALLY sure?")){
-                                                        location.replace("{{route('device.reset')}}"); 
-                                                    }
-                                                } 
-                                            }
-                                            </SCRIPT> 
 
                                         <a href="#" onclick="confirmation();">
                                             Reset database
@@ -148,7 +130,12 @@
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
-                                        <a href="{{ url('/logout') }}"
+
+                                        <a href="{{ url('/google/logout') }}">
+                                            Logout
+                                        </a>
+
+                                        <!--<a href="{{ url('/google/logout') }}"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             Logout
@@ -156,7 +143,7 @@
 
                                         <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
-                                        </form>
+                                        </form>-->
                                     </li>
                                 </ul>
                             </li>
@@ -224,28 +211,18 @@
 
         </div>
 
-            <div class="list-group">
-                <a href="{{ url('/device') }}" class="list-group-item">All</a>
-                <?php
-                    $line=0;
-                    while ($line<FileRepository::length()-1)
-                    {
-                        echo('<a href="'.url('/device/category/'.FileRepository::readLine($line)).'" class="list-group-item">'.FileRepository::readLine($line).'</a>');
-                        $line++;
-                    }
-                ?>
-            </div>
+        <div class="list-group" id="categories_list"></div>
 
         
         
         </div>
     </div>
+    <!--
         @endif
         <ol class="breadcrumb breadcrumb-arrow">
             @if (preg_match("/\/device/", $_SERVER['REQUEST_URI']))
-            <li><a href="/">Devices</a></li>
+            <li><a href="{{route('device.index')}}">Devices</a></li>
                 @if (preg_match("/\/category\//", $_SERVER['REQUEST_URI']))
-                <li><a href="#">Category</a></li>
                     <?php
                         $line=0;
                         while ($line<FileRepository::length()-1)
@@ -266,6 +243,9 @@
                     <li><a class="active">Display</a></li>
                     @endif
                 @endif
+                @if (preg_match("/\/import/", $_SERVER['REQUEST_URI']))
+                <li><a href="{{route('device.importxls')}}">Import from excel</a></li>
+                @endif
             @endif
 
             @if (preg_match("/\/admin/", $_SERVER['REQUEST_URI']))
@@ -277,12 +257,37 @@
                 @endif
             @endif
 
-        </ol>
+        </ol>-->
         @yield('content')
+
+
+        <!-- JavaScripts -->
+    {{-- <script src="{{ elixir('js/app.js') }}"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{ url('/js/app.js') }}"></script>
+
+    <script language="JavaScript"> 
+    function confirmation() {  
+        if (confirm("Are you really sure you want to reset the database?")){
+            if (confirm("Like really REALLY sure?")){
+                location.replace("{{route('device.reset')}}"); 
+            }
+        } 
+    }
+
+    </script> 
+
+    <script>
+        $(function(){
+            $('#categories_list').load("{{ route('categories.list') }}");
+        })
+    </script>
+
+    @yield('scripts')
         
         
 
     <!-- Scripts -->
-    <script src="{{ url('/js/app.js') }}"></script>
+    
 </body>
 </html>

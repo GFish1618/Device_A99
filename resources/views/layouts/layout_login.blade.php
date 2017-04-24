@@ -164,7 +164,7 @@
         <div class="col-md-4" style="padding-left:0 !important;padding-right:0 !important" >
             <div class="row" style="text-align:center; margin-top:25%;">
 
-            <img src="/logo899.ico" alt="Smiley face"  width="200">
+            <img src="{{url('/logo899.ico')}}" alt="Smiley face"  width="200">
             <h1>August99</h1>
             </div>
             <div class="row">

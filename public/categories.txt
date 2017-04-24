@@ -2,3 +2,4 @@ computer
 laptop
 phone
 others
+chairs

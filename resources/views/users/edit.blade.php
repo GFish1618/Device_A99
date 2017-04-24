@@ -32,3 +32,31 @@
 		<br><br>
 	</div>
 @endsection
+
+<script>
+$(function(){
+    $(document).on('submit', '#edit_Form', function(e) {  
+        e.preventDefault();
+         
+        $('input+small').text('');
+        $('input').parent().removeClass('has-error');
+         
+        $.ajax({
+            method: $(this).attr('method'),
+            url: "{{ url('categories') }}/"+ id_edit,
+            data: $(this).serialize(),
+            dataType: "json"
+        })
+        .done(function(data) {
+        	window.location.replace("{{ url('categories') }}")
+        })
+        .fail(function(data) {
+            $.each(data.responseJSON, function (key, value) {
+                var input = '#edit_Form input[name=' + key + ']';
+                $(input + '+small').text(value);
+                $(input).parent().addClass('has-error');
+            });
+        });
+    });
+})
+</script>

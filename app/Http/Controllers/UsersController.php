@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+session_start();
+
 use Illuminate\Http\Request;
 
 use App\Http\Requests\Users\UsersSearchRequest;
@@ -32,9 +34,14 @@ class UsersController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
 
-        $users = $this->usersRepository->getPaginate($this->nbrPerPage);
+        $nbrPerPage = $this->nbrPerPage;
 
-		return view('users_list', compact('users'));
+        if(isset($_SESSION['nbp']))
+            $nbrPerPage = $_SESSION['nbp'];
+
+        $users = $this->usersRepository->getPaginate($nbrPerPage);
+
+		return view('users/index', compact('users'));
     }
 
     /**
@@ -80,7 +87,7 @@ class UsersController extends Controller
         if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
         $user = $this->usersRepository->getById($id);
 
-		return view('user_edit',  compact('user'));
+		return view('users/edit',  compact('user'));
     }
 
     /**
@@ -115,7 +122,7 @@ class UsersController extends Controller
     public function search()
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withOk("You don't have the right to get here");}
-        return view('user_search');
+        return view('users/search');
     }
 
     public function display(UsersSearchRequest $request)
@@ -125,8 +132,15 @@ class UsersController extends Controller
 
         $links = $users->render();
 
-        return view('users_list', compact('users', 'links'));
+        return view('users/index', compact('users', 'links'));
 
+    }
+
+    public function googleLogout()
+    {
+        unset($_SESSION['access_token']);
+
+        return view('users/logout');
     }
 
     // To delete in final version (auto fill of the form)

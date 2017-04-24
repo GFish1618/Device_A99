@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Devices;
+namespace App\Http\Requests\Categories;
 
 use App\Http\Requests\Request;
 
-class DevicesCreateRequest extends Request
+class CategoriesCreateRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class DevicesCreateRequest extends Request
     public function rules()
     {
         return [
-            'user_name' => 'required',
-            'device_name' => 'required',
-            'category_id' => 'required'
+            'category_name' => 'required'
         ];
     }
 }

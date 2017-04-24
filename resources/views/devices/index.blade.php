@@ -10,6 +10,10 @@
 		@endif
 		<div class="panel panel-default">
  		<div class="panel-body">
+ 		@if (Auth::user()->admin >= 1)
+ 		<a class="btn btn-primary btn_add" href="#">Add a device</a>
+ 		@endif
+ 		<a class="btn btn-primary btn_search" href="#">Search</a>
 		 <div class="col-md-12">
 			{!! Form::open(['method' => 'POST', 'route' => ['device.indexPage'], 'id' => 'nb_per_page']) !!}
 				<select name="nbp" class="btn pull-right" onchange="document.getElementById('nb_per_page').submit();">
@@ -27,32 +31,30 @@
 					<option value="id" <?php if($_SESSION['orderby']=='id'){echo 'selected';} ?> >Id</option>
 					<option value="user_name" <?php if($_SESSION['orderby']=='user_name'){echo 'selected';} ?> >User</option>
 					<option value="device_name" <?php if($_SESSION['orderby']=='device_name'){echo 'selected';} ?> >Device</option>
-					<option value="category" <?php if($_SESSION['orderby']=='category'){echo 'selected';} ?> >Category</option>
+					<option value="category_id" <?php if($_SESSION['orderby']=='category_id'){echo 'selected';} ?> >Category</option>
 				</select>
 				<label class="pull-right"> Order by : </label>
 			{!! Form::close() !!}
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<th>User</th>
+						<!--<th>User</th>-->
 						<th>Device</th>
+						<th>Category</th>
 						<th></th>
-						@if (Auth::user()->admin >= 1)						
 						<th></th>
-						@if (Auth::user()->admin >= 2)
 						<th></th>
-						@endif
-						@endif
 					</tr>
 				</thead>
 				<tbody>
 					@foreach ($devices as $device)
 						<tr>
-							<td>{!! $device->user_name !!}</td>
+							<!--<td>{!! $device->user_name !!}</td>-->
 							<td class="text-primary"><strong>{!! $device->device_name !!}</strong></td>
-							<td>{!! link_to_route('device.show', 'Show', [$device->id], ['class' => 'btn btn-success btn-block']) !!}</td>
+							<td>{!! $device->category->category_name !!}</td>
+							<td><a class="btn btn-success btn-block btn_show" href="#" value="{{ $device->id }}">Show</a></td>
 							@if (Auth::user()->admin >= 1)
-							<td>{!! link_to_route('device.edit', 'Edit', [$device->id], ['class' => 'btn btn-warning btn-block']) !!}</td>
+							<td><a class="btn btn-warning btn-block btn_edit" href="#" value="{{ $device->id }}">Edit</a></td>
 							@if (Auth::user()->admin >= 2)
 							<td>
 								{!! Form::open(['method' => 'DELETE', 'route' => ['device.destroy', $device->id]]) !!}
@@ -71,4 +73,41 @@
 		
 		<br><br>
 	</div>
+
+	<div class="modal fade" id="baseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	</div>
+
+@endsection
+
+@section('scripts')
+<script>
+$(function(){
+
+    $('.btn_edit').click(function(e) {
+    	e.preventDefault();
+        $('#baseModal').modal();
+        $('#baseModal').load("{{ url('device') }}/" + $(this).attr("value") + "/edit");
+    });
+
+    $('.btn_show').click(function(e) {
+    	e.preventDefault();
+        $('#baseModal').modal();
+        $('#baseModal').load("{{ url('device') }}/" + $(this).attr("value"));
+    });
+
+    $('.btn_add').click(function(e) {
+    	e.preventDefault();
+        $('#baseModal').modal();
+        $('#baseModal').load("{{ route('device.create') }}");
+    });
+
+    $('.btn_search').click(function(e) {
+    	e.preventDefault();
+        $('#baseModal').modal();
+        $('#baseModal').load("{{ route('device.search') }}");
+    });
+
+})
+
+</script>
 @endsection

@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        $this->bootGoogleCustomSocialite();
+        //$this->bootGoogleCustomSocialite();
     }
 
     /**
@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    private function bootGoogleCustomSocialite()
+    /*private function bootGoogleCustomSocialite()
     {
         $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
         $socialite->extend(
@@ -37,5 +37,5 @@ class AppServiceProvider extends ServiceProvider
                 return $socialite->buildProvider('App\Acme\Socialite\GoogleCustomProvider', $config);
             }
         );
-    }
+    }*/
 }
