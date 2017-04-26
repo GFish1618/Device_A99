@@ -15,4 +15,9 @@ class Devices extends Model
 	{
 		return $this->belongsTo('App\Categories');
 	}
+
+	public function company() 
+	{
+		return $this->belongsTo('App\Companies');
+	}
 }

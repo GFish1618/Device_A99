@@ -134,16 +134,7 @@
                                         <a href="{{ url('/google/logout') }}">
                                             Logout
                                         </a>
-
-                                        <!--<a href="{{ url('/google/logout') }}"
-                                            onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
-
-                                        <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
-                                            {{ csrf_field() }}
-                                        </form>-->
+                                        
                                     </li>
                                 </ul>
                             </li>
@@ -160,7 +151,7 @@
     
         <div class="panel panel-default">
         <div class="panel-body">
-        <div class="card hovercard">
+        <div class="card hovercard hidden-xs">
                 <div class="cardheader">
 
                 </div>
@@ -190,22 +181,6 @@
                         @endif
                     </div>
                 </div>
-                <!--<div class="bottom">
-                    <a class="btn btn-primary btn-twitter btn-sm" href="https://twitter.com/webmaniac">
-                        <i class="fa fa-twitter"></i>
-                    </a>
-                    <a class="btn btn-danger btn-sm" rel="publisher"
-                       href="https://plus.google.com/+ahmshahnuralam">
-                        <i class="fa fa-google-plus"></i>
-                    </a>
-                    <a class="btn btn-primary btn-sm" rel="publisher"
-                       href="https://plus.google.com/shahnuralam">
-                        <i class="fa fa-facebook"></i>
-                    </a>
-                    <a class="btn btn-warning btn-sm" rel="publisher" href="https://plus.google.com/shahnuralam">
-                        <i class="fa fa-behance"></i>
-                    </a>
-                </div>-->
             </div>
         
 
@@ -213,8 +188,6 @@
 
         <div class="list-group" id="categories_list"></div>
 
-        
-        
         </div>
     </div>
     <!--
@@ -279,6 +252,7 @@
 
     <script>
         $(function(){
+            $('#categories_list').html('<h1 class="text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1>');
             $('#categories_list').load("{{ route('categories.list') }}");
         })
     </script>

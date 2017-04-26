@@ -67,6 +67,7 @@ $(function(){
 	$('#category_select').change(function() {
 		category_id = $('#category_select').val();
 		$('#fields_edit').load("{{url('categories/fields')}}/edit/"+category_id);
+		alert("{{url('categories/fields')}}/edit/"+category_id);
 	});
 
 	$(document).on('submit', '#edit_form', function(e) { 

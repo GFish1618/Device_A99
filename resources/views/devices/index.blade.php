@@ -3,10 +3,10 @@
 @section('content')
     <div class="col-sm-8">
     	@if(session()->has('ok'))
-			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
+			<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>{!! session('ok') !!}</div>
 		@endif
 		@if(session()->has('error'))
-			<div class="alert alert-danger alert-dismissible">{!! session('error') !!}</div>
+			<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>{!! session('error') !!}</div>
 		@endif
 		<div class="panel panel-default">
  		<div class="panel-body">
@@ -42,8 +42,12 @@
 						<th>Device</th>
 						<th>Category</th>
 						<th></th>
+						@if (Auth::user()->admin >= 1)
 						<th></th>
+						@if (Auth::user()->admin >= 2)
 						<th></th>
+						@endif
+						@endif
 					</tr>
 				</thead>
 				<tbody>
@@ -85,24 +89,28 @@ $(function(){
 
     $('.btn_edit').click(function(e) {
     	e.preventDefault();
+    	$('#baseModal').html('<div class="modal-dialog"><div class="modal-content"><h1 class="modal-title text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1></div></div>');
         $('#baseModal').modal();
         $('#baseModal').load("{{ url('device') }}/" + $(this).attr("value") + "/edit");
     });
 
     $('.btn_show').click(function(e) {
     	e.preventDefault();
+    	$('#baseModal').html('<div class="modal-dialog"><div class="modal-content"><h1 class="modal-title text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1></div></div>');
         $('#baseModal').modal();
         $('#baseModal').load("{{ url('device') }}/" + $(this).attr("value"));
     });
 
     $('.btn_add').click(function(e) {
     	e.preventDefault();
+    	$('#baseModal').html('<div class="modal-dialog"><div class="modal-content"><h1 class="modal-title text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1></div></div>');
         $('#baseModal').modal();
         $('#baseModal').load("{{ route('device.create') }}");
     });
 
     $('.btn_search').click(function(e) {
     	e.preventDefault();
+    	$('#baseModal').html('<div class="modal-dialog"><div class="modal-content"><h1 class="modal-title text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1></div></div>');
         $('#baseModal').modal();
         $('#baseModal').load("{{ route('device.search') }}");
     });

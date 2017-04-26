@@ -36,6 +36,7 @@
 $(function(){
 	$('.btn_edit').click(function(e) {
     	e.preventDefault();
+    	$('#baseModal').html('<div class="modal-dialog"><div class="modal-content"><h1 class="modal-title text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1></div></div>');
         $('#baseModal').modal();
         $('#baseModal').load("{{ url('device') }}/" + $(this).attr("value") + "/edit");
     });

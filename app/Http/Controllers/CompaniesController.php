@@ -6,16 +6,11 @@ if(!isset($_SESSION['nbp'])){session_start();}
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests\Categories\CategoriesCreateRequest;
-use App\Http\Requests\Categories\CategoriesUpdateRequest;
+use App\Repositories\CompaniesRepository;
 
-use App\Repositories\CategoriesRepository;
-
-class CategoriesController extends Controller
+class CompaniesController extends Controller
 {
- 
-    protected $categoriesRepository;
-    protected $nbrPerPage = 5;
+    protected $companiesRepository;
 
     public function __construct(CategoriesRepository $categoriesRepository)
     {
@@ -31,16 +26,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
-
-        $nbrPerPage = $this->nbrPerPage;
-
-        if(isset($_SESSION['nbp']))
-            $nbrPerPage = $_SESSION['nbp'];
         
-        $categories = $this->categoriesRepository->getPaginate($nbrPerPage);
-
-        return view('categories', compact('categories'));
     }
 
     /**
@@ -63,7 +49,7 @@ class CategoriesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $response = $this->categoriesRepository->store($request->all());
+        $response = $this->companiesRepository->store($request->all());
 
         return response()->json();
     }
@@ -90,7 +76,7 @@ class CategoriesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $category = $this->categoriesRepository->getById($id);
+        $category = $this->companiesRepository->getById($id);
 
         return view('categories/edit',  compact('category'));
     }
@@ -106,7 +92,7 @@ class CategoriesController extends Controller
     {   
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $this->categoriesRepository->update($id, $request->all());
+        $this->companiesRepository->update($id, $request->all());
 
         return response()->json();
     }
@@ -121,7 +107,7 @@ class CategoriesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
         
-        $this->categoriesRepository->destroy($id);
+        $this->companiesRepository->destroy($id);
 
         return back()->withError("The category was deleted");
 
@@ -136,22 +122,38 @@ class CategoriesController extends Controller
 
     public function list_sidebar()
     {
-        $categories = $this->categoriesRepository->getPaginate(50);
+        $categories = $this->companiesRepository->getPaginate(50);
 
         return view('categories/index', compact('categories'));
     }
 
     public function list_array()
     {
-        $categories_array = $this->categoriesRepository->list_array();
+        $categories_array = $this->companiesRepository->list_array();
 
         return $categories_array;
     }
 
-    public function getFields($mode, $id)
+    public function list_departments($id)
     {
-        $category = $this->categoriesRepository->getById($id);
+    	$departments_string = $this->companiesRepository->getById($id)->departments;
 
-        return view('categories/fields_'.$mode, compact('category'));
+    	$departments_array = Array();
+
+    	$department = '';
+
+    	$chars = str_split($departments_string);
+		foreach($chars as $char){
+		    if($char != '|')
+		    {
+		    	$department .= $char;
+		    }
+		    else
+		    {
+		    	$departments_array += Array( $department => $department );
+		    	$department = '';
+		    }
+		}
     }
+
 }
