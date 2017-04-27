@@ -7,14 +7,19 @@
         <div class="modal-body">
         	{!! Form::open(['route' => 'device.display', 'class' => 'form-horizontal panel', 'method' => 'post']) !!}
 
-			<!--<div class="form-group {!! $errors->has('user_name') ? 'has-error' : '' !!}">
-				{!! Form::text('user_name', null, ['class' => 'form-control', 'placeholder' => 'Username*']) !!}
-				{!! $errors->first('user_name', '<small class="help-block">:message</small>') !!}
-			</div>-->
-
 			<div class="form-group {!! $errors->has('device_name') ? 'has-error' : '' !!}">
 				{!! Form::text('device_name', null, ['class' => 'form-control', 'placeholder' => 'Device Name*']) !!}
 				{!! $errors->first('device_name', '<small class="help-block">:message</small>') !!}
+			</div>
+			
+			<div class="form-group">
+				{!! Form::select('company_id', $comp_array, null, ['class' => 'form-control']) !!}
+				{!! $errors->first('category_id', '<small class="help-block">:message</small>') !!}
+			</div>
+
+			<div class="form-group {!! $errors->has('device_name') ? 'has-error' : '' !!}">
+				{!! Form::text('department', null, ['class' => 'form-control', 'placeholder' => 'Department']) !!}
+				{!! $errors->first('department', '<small class="help-block">:message</small>') !!}
 			</div>
 
 			<div class="form-group">

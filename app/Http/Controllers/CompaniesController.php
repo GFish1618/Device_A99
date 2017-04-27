@@ -12,10 +12,10 @@ class CompaniesController extends Controller
 {
     protected $companiesRepository;
 
-    public function __construct(CategoriesRepository $categoriesRepository)
+    public function __construct(CompaniesRepository $companiesRepository)
     {
         $this->middleware('auth');
-        $this->categoriesRepository = $categoriesRepository;
+        $this->companiesRepository = $companiesRepository;
     }
 
 
@@ -122,38 +122,49 @@ class CompaniesController extends Controller
 
     public function list_sidebar()
     {
-        $categories = $this->companiesRepository->getPaginate(50);
+        $companies = $this->list_array();
 
-        return view('categories/index', compact('categories'));
+        //echo('<pre>');
+        //print_r($companies);
+
+        return view('companies/index', compact('companies'));
     }
 
     public function list_array()
     {
-        $categories_array = $this->companiesRepository->list_array();
+    	$companies = $this->companiesRepository->getPaginate(50);
 
-        return $categories_array;
-    }
+    	$companies_array = Array();
 
-    public function list_departments($id)
-    {
-    	$departments_string = $this->companiesRepository->getById($id)->departments;
+    	foreach ($companies as $company) {
 
-    	$departments_array = Array();
+	    	$departments_array = Array();
+	    	$department = '';
 
-    	$department = '';
+	    	$chars = str_split($company->departments);
+			foreach($chars as $char){
+			    if($char != '|')
+			    {
+			    	$department .= $char;
+			    }
+			    else
+			    {
+			    	$departments_array += Array( $department => $department );
+			    	$department = '';
+			    }
+			}
+			$companies_array += Array(
+				$company->name => Array(
+					'id' => $company->id,
+					'name' => $company->name,
+					'logo' => $company->logo,
+					'departments' => $departments_array
+				)
+			);
+    	}
 
-    	$chars = str_split($departments_string);
-		foreach($chars as $char){
-		    if($char != '|')
-		    {
-		    	$department .= $char;
-		    }
-		    else
-		    {
-		    	$departments_array += Array( $department => $department );
-		    	$department = '';
-		    }
-		}
+    	return $companies_array;
+    
     }
 
 }

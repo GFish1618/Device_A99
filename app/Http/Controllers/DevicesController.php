@@ -211,6 +211,30 @@ class DevicesController extends Controller
         return view('devices/index', compact('devices', 'links'));
     }
 
+    public function company($comp, $dept='') // Display all the devices in the category $cat
+    {
+        $nbrPerPage = $this->nbrPerPage;
+        $orderby = $this->orderby;
+
+        if(isset($_SESSION['nbp']))
+            $nbrPerPage = $_SESSION['nbp'];
+        if(isset($_SESSION['orderby']))
+            $orderby = $_SESSION['orderby'];
+
+        if($dept != '')
+        {
+            $devices = $this->deviceRepository->search(['company' => $comp, 'department' => $dept], $nbrPerPage, $orderby);
+        }
+        else
+        {
+            $devices = $this->deviceRepository->search(['company' => $comp], $nbrPerPage, $orderby);
+        }
+
+        $links = $devices->render();
+
+        return view('devices/index', compact('devices', 'links'));
+    }
+
     public function exportxls() // Export the database in an excel file for download
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
@@ -222,15 +246,13 @@ class DevicesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-
-        //echo $request->file('file')->getClientOriginalExtension()."<br>";
         if (!preg_match("/xlsx?$/", $request->file('file')->getClientOriginalExtension()))
         {
             return redirect('/device/import')->withError("Incorrect file type, must be .xls or .xlsx");
         }
         if($this->deviceRepository->verifxls($request->all()['file']))
         {
-            $this->deviceRepository->import($request->all()['file']);
+            $this->deviceRepository->import($request->all()['file'], $request->all()['company_id']);
             return redirect('/device')->withOk("File data added");
         }
         else

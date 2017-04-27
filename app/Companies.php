@@ -14,4 +14,15 @@ class Companies extends Model
 	{
 	    return $this->hasMany('App\Devices');
 	}
+
+	public function findOrAdd($department)
+	{
+		$departments_string = $this->departments;
+		if(!preg_match('/'.$department.'/', $departments_string))
+		{
+			$departments_string .= $department.'|';
+			$this->departments = $departments_string;
+			$this->save();
+		}
+	}
 }

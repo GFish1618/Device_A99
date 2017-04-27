@@ -15,8 +15,14 @@
 					{!! Form::open(['route' => 'device.importxls', 'class' => 'form-horizontal panel', 'files' => 'true']) !!}	
 
 					<div class="form-group {!! $errors->has('file') ? 'has-error' : '' !!}">
-						{!! Form::file('file', null, ['class' => 'form-control', 'placeholder' => 'Username']) !!}
+						{!! Form::file('file', null, ['class' => 'form-control']) !!}
 						{!! $errors->first('file', '<small class="help-block">:message</small>') !!}
+					</div>
+
+					<div class="form-group">
+						{!! Form::label('Company') !!}
+						{!! Form::select('company_id', ['1' => 'TDP' , '2' => 'Agent Image'], null, ['class' => 'form-control']) !!}
+						<small class="help-block hide"></small>
 					</div>
 
 					{!! Form::submit('Use this file', ['class' => 'btn btn-primary pull-right']) !!}

@@ -2,7 +2,15 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-            <h4 class="modal-title" id="myModalLabel">{{ $device->device_name }}</h4>
+            <h4 class="modal-title" id="myModalLabel">
+            	@if ($device->company->logo!='')
+					<img src="{!! $device->company->logo !!}" alt="{!! $device->company->name !!}" style="width:40px;height:40px;">
+				@else
+					{!! $device->company->name !!}||
+				@endif
+				{{ $device->device_name }} <br>
+				<small>{!! $device->department !!}</small>
+			</h4>
         </div>
         <div class="modal-body">
 			@if (Auth::user()->admin >= 2)
@@ -14,10 +22,11 @@
 			<a class="btn btn-info pull-right btn_edit" href="#" value="{{ $device->id }}">Edit</a>
 			@endif
 
-				<!--<p><strong class="text-primary">Username : </strong> {{ $device->user_name }}</p>-->
 				<p><strong class="text-primary">Device name : </strong> {{ $device->device_name }}</p>
+				<p><strong class="text-primary">Company : </strong> {{ $device->company->name }}</p>
+				<p><strong class="text-primary">Department : </strong> {{ $device->department }}</p>
 				<p><strong class="text-primary">Category : </strong> {{ $category->category_name }}</p>
-
+				<hr>
 			<?php
 				for($i=1 ; $i<=$category->number_of_fields ; $i++)
 				{

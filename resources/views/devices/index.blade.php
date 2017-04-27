@@ -38,14 +38,16 @@
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<!--<th>User</th>-->
 						<th>Device</th>
-						<th>Category</th>
+						<th class="hidden-xs">Company</th>
+						<th class="hidden-xs">Department</th>
+						<th class="hidden-xs">Category</th>
+						<th class="hidden-md hidden-xs hidden-sm">First field</th>
 						<th></th>
 						@if (Auth::user()->admin >= 1)
-						<th></th>
+						<th class="hidden-xs hidden-sm"></th>
 						@if (Auth::user()->admin >= 2)
-						<th></th>
+						<th class="hidden-xs hidden-sm"></th>
 						@endif
 						@endif
 					</tr>
@@ -53,14 +55,22 @@
 				<tbody>
 					@foreach ($devices as $device)
 						<tr>
-							<!--<td>{!! $device->user_name !!}</td>-->
-							<td class="text-primary"><strong>{!! $device->device_name !!}</strong></td>
-							<td>{!! $device->category->category_name !!}</td>
+							<td class="text-primary"><a class="btn_show" href="#" value="{{ $device->id }}"><strong>{!! $device->device_name !!}</strong><a></td>
+							<td class="hidden-xs">
+							@if ($device->company->logo!='')
+								<img src="{!! $device->company->logo !!}" alt="{!! $device->company->name !!}" style="width:40px;height:40px;">
+							@else
+								{!! $device->company->name !!}
+							@endif
+							</td>
+							<td class="hidden-xs">{!! $device->department !!}</td>
+							<td class="hidden-xs">{!! $device->category->category_name !!}</td>
+							<td class="hidden-md hidden-xs hidden-sm">{!! $device->field1 !!}</td>
 							<td><a class="btn btn-success btn-block btn_show" href="#" value="{{ $device->id }}">Show</a></td>
 							@if (Auth::user()->admin >= 1)
-							<td><a class="btn btn-warning btn-block btn_edit" href="#" value="{{ $device->id }}">Edit</a></td>
+							<td class="hidden-xs hidden-sm"><a class="btn btn-warning btn-block btn_edit" href="#" value="{{ $device->id }}">Edit</a></td>
 							@if (Auth::user()->admin >= 2)
-							<td>
+							<td class="hidden-xs hidden-sm">
 								{!! Form::open(['method' => 'DELETE', 'route' => ['device.destroy', $device->id]]) !!}
 									{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-block', 'onclick' => 'return confirm(\'Are you sure?\')']) !!}
 								{!! Form::close() !!}

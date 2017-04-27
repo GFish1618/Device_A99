@@ -17,6 +17,7 @@ class CreateDevicesTable extends Migration
             $table->string('device_name', 100);
             $table->integer('company_id')->unsigned();
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('restrict')->onUpdate('restrict');
+            $table->string('department', 100);
             $table->integer('category_id')->unsigned();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('restrict')->onUpdate('restrict');
             $table->string('field1', 100);

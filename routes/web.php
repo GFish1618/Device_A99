@@ -15,6 +15,8 @@ Route::post('device/search/display', 'DevicesController@display')->name('device.
 Route::get('device/search/display', 'DevicesController@display');
 
 Route::get('device/category/{cat}', 'DevicesController@category')->name('device.category');
+Route::get('device/company/{comp}', 'DevicesController@company');
+Route::get('device/company/{comp}/{dept}', 'DevicesController@company');
 
 Route::get('device/export', 'DevicesController@exportxls')->name('device.exportxls');
 Route::get('device/52830473571418', 'DevicesController@reset')->name('device.reset');
@@ -36,10 +38,14 @@ Route::get('admin/search/display', 'UsersController@display');
 Route::resource('admin', 'UsersController');
 
 Route::get('categories/list', 'CategoriesController@list_sidebar')->name('categories.list');
-//Route::get('categories/test', 'CategoriesController@list_array');
 Route::get('categories/fields/{mode}/{id}', 'CategoriesController@getFields');
 
 Route::resource('categories', 'CategoriesController');
+
+Route::get('companies/list', 'CompaniesController@list_sidebar')->name('companies.list');
+Route::get('companies/fields/{mode}/{id}', 'CompaniesController@getFields');
+
+Route::resource('companies', 'CompaniesController');
 
 Auth::routes();
 

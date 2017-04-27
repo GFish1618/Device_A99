@@ -149,9 +149,10 @@
         <div class="container-fluid">
         <div class="col-sm-offset-0 col-sm-2">
     
-        <div class="panel panel-default">
+        <!--<div class="panel panel-default">
+
         <div class="panel-body">
-        <div class="card hovercard hidden-xs">
+            <div class="card hovercard hidden-xs">
                 <div class="cardheader">
 
                 </div>
@@ -182,13 +183,15 @@
                     </div>
                 </div>
             </div>
-        
+        </div>
+        </div>-->
 
+        <div class="list-group">
+            <a href="{{ url('/device') }}" class="list-group-item">All</a>
+            <div id="categories_list"></div>
+            <div id="companies_list"></div>
         </div>
 
-        <div class="list-group" id="categories_list"></div>
-
-        </div>
     </div>
     <!--
         @endif
@@ -254,6 +257,9 @@
         $(function(){
             $('#categories_list').html('<h1 class="text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1>');
             $('#categories_list').load("{{ route('categories.list') }}");
+
+            $('#companies_list').html('<h1 class="text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1>');
+            $('#companies_list').load("{{ route('companies.list') }}");
         })
     </script>
 

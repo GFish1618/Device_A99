@@ -24,9 +24,10 @@ class DeviceRepository
 	{
 		$nb_fields = $inputs['number_of_fields'];
 
-		//$device->user_name = $inputs['user_name'];
 		$device->device_name = $inputs['device_name'];
 		$device->category_id = $inputs['category_id'];
+		$device->company_id = $inputs['company_id'];
+		$device->department = $inputs['department'];
 
 		for($i = 1; $i <= $nb_fields; $i++)
     	{
@@ -107,14 +108,18 @@ class DeviceRepository
 	public function search(Array $inputs, $n, $orderby = 'id')
 	{
 		$device = new $this->device;
-		/*if (isset($inputs['user_name']) and $inputs['user_name']!=''){
-			$device = $device->where('user_name', 'like', '%'.$inputs['user_name'].'%');
-		}*/
+
 		if (isset($inputs['device_name']) and $inputs['device_name']!=''){
 			$device = $device->where('device_name', 'like', '%'.$inputs['device_name'].'%');
 		}
-		if (isset($inputs['category']) and $inputs['category']!=null){
-			$device = $device->where('category_id', 'like', '%'.$inputs['category'].'%');
+		if (isset($inputs['category_id']) and $inputs['category_id']!=null){
+			$device = $device->where('category_id', 'like', $inputs['category_id']);
+		}
+		if (isset($inputs['company_id']) and $inputs['company_id']!=null){
+			$device = $device->where('company_id', 'like', $inputs['company_id']);
+		}
+		if (isset($inputs['department']) and $inputs['department']!=null){
+			$device = $device->where('department', 'like', $inputs['department']);
 		}
 
 		for($i = 1; $i <= 30; $i++)
@@ -210,64 +215,81 @@ class DeviceRepository
 		return true;
 	}
 
-	public function import($filePath)
+	public function import($filePath, $company_id)
 	{
-	    Excel::load($filePath, function($reader) {
+		$_SESSION['comp_id'] = $company_id;
+		Excel::load($filePath, function($reader) {
 	    	$data = $reader->get();
 	    	
 	    	foreach($data as $sheet){
-		    	foreach($sheet as $inputs){
-
-		    		$device = new $this->device;
-
-		    		$category = $this->category->where('category_name', $sheet->getTitle())->first();
-		    		if($category == null)
-		    		{
-		    			$category = new $this->category;
-		    			$category->category_name = $sheet->getTitle();
-		    			$nb_fields = 0;
-
-						foreach ($inputs as $field_name => $value) {
-						    if($field_name != null /*and $field_name != 'username'*/ and $field_name != 'device_name')
-		    				{
-		    					$nb_fields++;
-		    					$field = 'field'.$nb_fields.'_name';
-		    					$category->$field = $field_name;
-		    				}
-						}
-						$category->number_of_fields = $nb_fields;
-		    			$category->save();
-		    		}
-
-		    		if ( isset($inputs->device_name) and $inputs->device_name!=null)
-					{
-	    		
-			    		//$device->user_name = $inputs->username;
-			    		$device->device_name = $inputs->device_name;
-			    		$device->category_id = $category->id;
-			    		
-			    		for($i=1 ; $i<=$category->number_of_fields ; $i++)
-			    		{
-			    			$field = 'field'.$i;
-			    			$field_name = 'field'.$i.'_name';
-			    			$name = $category->$field_name;
-
-			    			if ($inputs->$name!=null)
-			    				$device->$field = $inputs->$name;
-			    		}
-
-			    		$siblings = $this->findSiblings($device);
-			    		while ($siblings->first() != null)
-			    		{
-			    			$siblings->first()->delete();
-			    			$siblings = $this->findSiblings($device);
-			    		}
-			    		$device->save();
-				    }
-
-		    	}
+    			if(is_string($sheet->first()))
+    			{
+    				$this->excel_treat($sheet, $data->getTitle());
+    			}
+    			else
+    			{
+    				foreach($sheet as $inputs){
+    					$this->excel_treat($inputs, $sheet->getTitle());
+			    	}
+    			}
 		    }	    	
 		});
+	}
+
+	private function excel_treat($inputs, $sheet_title)
+	{
+		$device = new $this->device;
+
+		$category = $this->category->where('category_name', $sheet_title)->first();
+
+		if($category == null and $inputs != null)
+		{
+			$category = new $this->category;
+			$category->category_name = $sheet_title;
+			$nb_fields = 0;
+
+			foreach ($inputs as $field_name => $value) {
+			    if($field_name != null and $field_name != 'device_name' and $field_name != 'department')
+				{
+					$nb_fields++;
+					$field = 'field'.$nb_fields.'_name';
+					$category->$field = $field_name;
+				}
+			}
+			$category->number_of_fields = $nb_fields;
+			$category->save();
+		}
+
+		if ( isset($inputs->device_name) and $inputs->device_name!=null)
+		{
+    		$device->device_name = $inputs->device_name;
+    		$device->category_id = $category->id;
+    		$device->company_id = $_SESSION['comp_id'];
+
+    		if(isset($inputs->department) and $inputs->department!=null)
+    		{
+    			$device->department = $inputs->department;
+				$device->company->findOrAdd($inputs->department); //If needed we add a new department to the company
+    		}
+    		
+    		for($i=1 ; $i<=$category->number_of_fields ; $i++)
+    		{
+    			$field = 'field'.$i;
+    			$field_name = 'field'.$i.'_name';
+    			$name = $category->$field_name;
+
+    			if ($inputs->$name!=null)
+    				$device->$field = $inputs->$name;
+    		}
+
+    		/*$siblings = $this->findSiblings($device);
+    		while ($siblings->first() != null)
+    		{
+    			$siblings->first()->delete();
+    			$siblings = $this->findSiblings($device);
+    		}*/
+    		$device->save();
+	    }
 	}
 
 }
