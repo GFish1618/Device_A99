@@ -24,9 +24,9 @@ class DevicesUpdateRequest extends Request
     public function rules()
     {
         return [
-            'user_name' => 'required',
             'device_name' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
+            'company_id' => 'required'
         ];
     }
 }

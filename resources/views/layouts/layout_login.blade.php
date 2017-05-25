@@ -36,7 +36,7 @@
   width:100%;
   overflow:hidden;" >
     <div class="row">
-        <div class="col-md-8" style="padding-left:0 !important;padding-right:0 !important" >
+        <div class="col-md-8 hidden-xs hidden-sm" style="padding-left:0 !important;padding-right:0 !important" >
             <div id="gallery" class="cf">
                 <a href="#" class="gallery-slide">
                     <img src="https://www.august99.com/wp-content/uploads/2016/05/James-D-e1465181631894.jpg">
@@ -54,6 +54,12 @@
                     <img src="https://www.august99.com/wp-content/uploads/2016/05/Jacq-5-e1465180682601.jpg">
                     <div class="gallery-caption">
                     <h2>Jacq</h2>
+                    </div>
+                </a>
+                <a href="#" class="gallery-slide">
+                    <img src="https://www.august99.com/wp-content/uploads/2016/05/Tiger-e1465181603248.jpg">
+                    <div class="gallery-caption">
+                    <h2>Tiger</h2>
                     </div>
                 </a>
                 <a href="#" class="gallery-slide">
@@ -78,12 +84,6 @@
                     <img src="https://www.august99.com/wp-content/uploads/2016/06/Jon-Krabbe.jpg">
                     <div class="gallery-caption">
                     <h2>Jon</h2>
-                    </div>
-                </a>
-                <a href="#" class="gallery-slide">
-                    <img src="https://www.august99.com/wp-content/uploads/2016/05/Tiger-e1465181603248.jpg">
-                    <div class="gallery-caption">
-                    <h2>Tiger</h2>
                     </div>
                 </a>
                 <a href="#" class="gallery-slide">
@@ -147,12 +147,6 @@
                     </div>
                 </a>
                 <a href="#" class="gallery-slide">
-                    <img src="https://www.august99.com/wp-content/uploads/2016/05/John-Marco-Alcaria-e1465181232536.jpg">
-                    <div class="gallery-caption">
-                    <h2>Marco</h2>
-                    </div>
-                </a>
-                <a href="#" class="gallery-slide">
                     <img src="https://www.august99.com/wp-content/uploads/2016/05/IMG_6966-e1465181322539.jpg">
                     <div class="gallery-caption">
                     <h2>Blaissie</h2>
@@ -164,8 +158,9 @@
         <div class="col-md-4" style="padding-left:0 !important;padding-right:0 !important" >
             <div class="row" style="text-align:center; margin-top:25%;">
 
-            <img src="{{url('/logo899.ico')}}" alt="Smiley face"  width="200">
+            <img src="https://media.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAAVZAAAAJDlmZWE2ZDQ4LWEyNjUtNGVkYS04NDJhLTVlNjc4ZTU5ODg0ZQ.png" alt="Smiley face"  width="200">
             <h1>August99</h1>
+            <h4>Devices CMS</h4>
             </div>
             <div class="row">
             <div class="col-md-12" style="text-align:center">
@@ -176,6 +171,9 @@
         </div>
     </div>
 </div>
+
+
+
 <style>
 .cf:before,
 .cf:after {

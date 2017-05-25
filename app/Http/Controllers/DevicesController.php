@@ -17,6 +17,7 @@ use App\Repositories\FileRepository;
 use App\Repositories\GoogleAuth;
 
 use App\Repositories\CategoriesRepository;
+use App\Repositories\CompaniesRepository;
 
 use Excel;
 use Socialite;
@@ -31,14 +32,16 @@ class DevicesController extends Controller
  
 	protected $deviceRepository;
     protected $categoriesRepository;
+    protected $companiesRepository;
 	protected $nbrPerPage = 5;
     protected $orderby = 'id';
 
-	public function __construct(DeviceRepository $deviceRepository, CategoriesRepository $categoriesRepository)
+	public function __construct(DeviceRepository $deviceRepository, CategoriesRepository $categoriesRepository, CompaniesRepository $companiesRepository)
     {
         $this->middleware('auth');
 		$this->deviceRepository = $deviceRepository;
         $this->categoriesRepository = $categoriesRepository;
+        $this->companiesRepository = $companiesRepository;
 	}
 
 
@@ -72,8 +75,9 @@ class DevicesController extends Controller
         if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
         $cat_array = $this->categoriesRepository->list_array();
+        $comp_array = $this->companiesRepository->list_array();
 
-        return view('devices/create', compact('cat_array'));
+        return view('devices/create', compact('cat_array', 'comp_array'));
     }
 
     /**
@@ -120,8 +124,9 @@ class DevicesController extends Controller
         $category = $this->categoriesRepository->getById($device->category_id);
 
         $cat_array = $this->categoriesRepository->list_array();
+        $comp_array = $this->companiesRepository->list_array();
 
-		return view('devices/edit',  compact('device', 'category', 'cat_array'));
+		return view('devices/edit',  compact('device', 'category', 'cat_array', 'comp_array'));
     }
 
     /**
@@ -135,7 +140,7 @@ class DevicesController extends Controller
     {
         if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $response = $this->deviceRepository->update($id, $request->all());
+        $this->deviceRepository->update($id, $request->all());
 		
 		return response()->json();
     }
@@ -169,8 +174,9 @@ class DevicesController extends Controller
     public function search() // Form Search for a device
     {
         $cat_array = $this->categoriesRepository->list_array();
+        $comp_array = $this->companiesRepository->list_array();
 
-        return view('devices/search', compact('cat_array'));
+        return view('devices/search', compact('cat_array', 'comp_array'));
     }
 
     public function display(DevicesSearchRequest $request_receive) // Receive the answer of the previous form
@@ -204,7 +210,7 @@ class DevicesController extends Controller
         if(isset($_SESSION['orderby']))
             $orderby = $_SESSION['orderby'];
 
-        $devices = $this->deviceRepository->search(['category' => $cat], $nbrPerPage, $orderby);
+        $devices = $this->deviceRepository->search(['category_id' => $cat], $nbrPerPage, $orderby);
 
         $links = $devices->render();
 
@@ -223,11 +229,11 @@ class DevicesController extends Controller
 
         if($dept != '')
         {
-            $devices = $this->deviceRepository->search(['company' => $comp, 'department' => $dept], $nbrPerPage, $orderby);
+            $devices = $this->deviceRepository->search(['company_id' => $comp, 'department' => $dept], $nbrPerPage, $orderby);
         }
         else
         {
-            $devices = $this->deviceRepository->search(['company' => $comp], $nbrPerPage, $orderby);
+            $devices = $this->deviceRepository->search(['company_id' => $comp], $nbrPerPage, $orderby);
         }
 
         $links = $devices->render();
@@ -239,7 +245,16 @@ class DevicesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $this->deviceRepository->export($this->categoriesRepository->getPaginate(0));
+        $this->deviceRepository->export();
+    }
+
+    public function importForm()
+    {
+        if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
+
+        $comp_array = $this->companiesRepository->list_array();
+
+        return view('devices/import', compact('comp_array'));
     }
 
     public function importxls(DevicesImportRequest $request) // Import the devices from the excel in request to the database

@@ -19,7 +19,6 @@ class CategoriesRepository
 	private function save(Categories $category, Array $inputs)
 	{
 		$category->category_name = $inputs['category_name'];
-		$category->parents = $inputs['parents'];
 		$category->number_of_fields = $inputs['number_of_fields'];
 
 		for($i = 1; $i <= $inputs['number_of_fields']; $i++)
@@ -41,7 +40,8 @@ class CategoriesRepository
 	{
 		$category = new $this->category;		
 		
-		$response = $this->save($category, $inputs);
+		$this->save($category, $inputs);
+
 	}
 
 	public function getById($id)

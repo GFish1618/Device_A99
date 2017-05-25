@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-	<div class="col-sm-offset-2 col-sm-4">
+	<div class="col-sm-8">
+	<div class="col-sm-offset-3 col-sm-6">
 		@if(session()->has('ok'))
 			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
 		@endif
@@ -21,7 +22,7 @@
 
 					<div class="form-group">
 						{!! Form::label('Company') !!}
-						{!! Form::select('company_id', ['1' => 'TDP' , '2' => 'Agent Image'], null, ['class' => 'form-control']) !!}
+						{!! Form::select('company_id', $comp_array, null, ['class' => 'form-control']) !!}
 						<small class="help-block hide"></small>
 					</div>
 
@@ -34,5 +35,6 @@
 			<span class="glyphicon glyphicon-circle-arrow-left"></span> Back
 		</a>
 		<br><br>
+	</div>
 	</div>
 @endsection

@@ -29,7 +29,7 @@
 			{!! Form::open(['method' => 'POST', 'route' => ['device.indexOrder'], 'id' => 'order_by']) !!}
 				<select name="orderby" class="btn pull-right" onchange="document.getElementById('order_by').submit();">
 					<option value="id" <?php if($_SESSION['orderby']=='id'){echo 'selected';} ?> >Id</option>
-					<option value="user_name" <?php if($_SESSION['orderby']=='user_name'){echo 'selected';} ?> >User</option>
+					<option value="department" <?php if($_SESSION['orderby']=='department'){echo 'selected';} ?> >Departments</option>
 					<option value="device_name" <?php if($_SESSION['orderby']=='device_name'){echo 'selected';} ?> >Device</option>
 					<option value="category_id" <?php if($_SESSION['orderby']=='category_id'){echo 'selected';} ?> >Category</option>
 				</select>
@@ -39,7 +39,7 @@
 				<thead>
 					<tr>
 						<th>Device</th>
-						<th class="hidden-xs">Company</th>
+						<th >Company</th>
 						<th class="hidden-xs">Department</th>
 						<th class="hidden-xs">Category</th>
 						<th class="hidden-md hidden-xs hidden-sm">First field</th>
@@ -55,8 +55,8 @@
 				<tbody>
 					@foreach ($devices as $device)
 						<tr>
-							<td class="text-primary"><a class="btn_show" href="#" value="{{ $device->id }}"><strong>{!! $device->device_name !!}</strong><a></td>
-							<td class="hidden-xs">
+							<td class="text-primary"><a class="btn_show" href="#" value="{{ $device->id }}"><strong>{!! $device->device_name !!}</strong></a></td>
+							<td >
 							@if ($device->company->logo!='')
 								<img src="{!! $device->company->logo !!}" alt="{!! $device->company->name !!}" style="width:40px;height:40px;">
 							@else
@@ -84,9 +84,8 @@
 			{{ $devices->appends(Request::except(['page', '_token']))->links() }}
 			</div>
 		</div>
-		
-		<br><br>
 	</div>
+</div>
 
 	<div class="modal fade" id="baseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	</div>

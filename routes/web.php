@@ -21,7 +21,7 @@ Route::get('device/company/{comp}/{dept}', 'DevicesController@company');
 Route::get('device/export', 'DevicesController@exportxls')->name('device.exportxls');
 Route::get('device/52830473571418', 'DevicesController@reset')->name('device.reset');
 
-Route::get('device/importxls', function (){ return view('devices/import'); });
+Route::get('device/importxls', 'DevicesController@importForm');
 Route::post('device/importxls', 'DevicesController@importxls')->name('device.importxls');
 
 Route::get('device/gdrive', 'DevicesController@import_gdrive')->name('device.gdrive');

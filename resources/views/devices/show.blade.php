@@ -8,8 +8,8 @@
 				@else
 					{!! $device->company->name !!}||
 				@endif
-				{{ $device->device_name }} <br>
-				<small>{!! $device->department !!}</small>
+				<small>{!! $device->department !!}</small><br>
+				{{ $device->device_name }}
 			</h4>
         </div>
         <div class="modal-body">

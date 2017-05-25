@@ -6,6 +6,9 @@ if(!isset($_SESSION['nbp'])){session_start();}
 
 use Illuminate\Http\Request;
 
+use App\Http\Requests\Companies\CompaniesCreateRequest;
+use App\Http\Requests\Companies\CompaniesUpdateRequest;
+
 use App\Repositories\CompaniesRepository;
 
 class CompaniesController extends Controller
@@ -26,7 +29,9 @@ class CompaniesController extends Controller
      */
     public function index()
     {
-        
+        $companies = $this->list_array();
+
+        return view('companies/companies', compact('companies'));
     }
 
     /**
@@ -36,7 +41,9 @@ class CompaniesController extends Controller
      */
     public function create()
     {
+        if(auth()->user()->admin < 1) {return redirect('device')->withError("You don't have the right to get here");}
 
+        return view('companies/create');
     }
 
     /**
@@ -45,7 +52,7 @@ class CompaniesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoriesCreateRequest $request)
+    public function store(CompaniesCreateRequest $request)
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
@@ -76,9 +83,9 @@ class CompaniesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $category = $this->companiesRepository->getById($id);
+        $company = $this->companiesRepository->getById($id);
 
-        return view('categories/edit',  compact('category'));
+        return view('companies/edit',  compact('company'));
     }
 
     /**
@@ -88,7 +95,7 @@ class CompaniesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoriesUpdateRequest $request, $id)
+    public function update(CompaniesUpdateRequest $request, $id)
     {   
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
@@ -109,7 +116,7 @@ class CompaniesController extends Controller
         
         $this->companiesRepository->destroy($id);
 
-        return back()->withError("The category was deleted");
+        return back()->withError("The company was deleted");
 
         /*if($this->categoriesRepository->getById($id)->devices == null)
         {

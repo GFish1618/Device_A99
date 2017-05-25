@@ -27,7 +27,12 @@ class DeviceRepository
 		$device->device_name = $inputs['device_name'];
 		$device->category_id = $inputs['category_id'];
 		$device->company_id = $inputs['company_id'];
-		$device->department = $inputs['department'];
+
+		if(isset($inputs['department']) and $inputs['department']!=null)
+		{
+			$device->department = $inputs['department'];
+			$device->company->findOrAdd($inputs['department']); //If needed we add a new department to the company
+		}
 
 		for($i = 1; $i <= $nb_fields; $i++)
     	{
@@ -77,6 +82,8 @@ class DeviceRepository
 	public function update($id, Array $inputs)
 	{
 		$this->save($this->getById($id), $inputs);
+
+		return $this->getById($id)->device_name;
 	}
 
 	public function destroy($id)
@@ -86,16 +93,6 @@ class DeviceRepository
 
 	public function reset()
 	{
-		echo("<pre>__
-##|_          hmmm, 'press to reset'!
-##| |    _  .' ...wonder if that's for real??
-##| D- o')            __
-##|_| \.\",         -=(o '.
-##|     ||_           '.-.\
-##|    .\".            /|  \\\\
-##|   _|_|            '|  ||
------------------------_\_):,_------</pre>");
-
 		$devices = $this->device->where('id', '>=', '0');
 		
 		while ($devices->first() != null)
@@ -118,8 +115,8 @@ class DeviceRepository
 		if (isset($inputs['company_id']) and $inputs['company_id']!=null){
 			$device = $device->where('company_id', 'like', $inputs['company_id']);
 		}
-		if (isset($inputs['department']) and $inputs['department']!=null){
-			$device = $device->where('department', 'like', $inputs['department']);
+		if (isset($inputs['department']) and $inputs['department']!=''){
+			$device = $device->where('department', 'like', '%'.$inputs['department'].'%');
 		}
 
 		for($i = 1; $i <= 30; $i++)
@@ -140,7 +137,6 @@ class DeviceRepository
 	{
 		$device = new $this->device;
 		$device = $device->where('device_name', $compare_device->device_name);
-			//->where('user_name', $compare_device->user_name)
 			
 
 		if ($compare_device->unit_sn!='')
@@ -159,31 +155,38 @@ class DeviceRepository
 				$excel->sheet($category->category_name, function($sheet){
 					$sheet->fromArray(array() , null, 'A1', false, false);
 
-				 	$row_array = array('id', /*'Username',*/ 'Device name');
+				 	$row_array = array('id', 'Company', 'Department', 'Device name');
 
 				 	for($i=1 ; $i<=$this->cat_row->number_of_fields ; $i++)
 				 	{
 				 		$field = 'field'.$i.'_name';
-				 		$row_array += array($i+2 => $this->cat_row->$field);
+				 		$row_array += array($i+3 => $this->cat_row->$field);
 				 	}
 				 	
 
 					$sheet->appendRow($row_array);
 
-					$devices = $this->device->paginate(0);
+					$n=1;
+
+					$devices = $this->device->all();
 	  				foreach ($devices as $row)
 	  				{
+	  					//echo($n.'|');
+	  					$n++;
+
 	  					if($row->category->category_name == $sheet->getTitle())
 	  					{
-	  						$row_array = array($row->id, /*$row->user_name,*/ $row->device_name);
+	  						$row_array = array($row->id, $row->company->name, $row->department, $row->device_name);
 
 	  						for($i=1 ; $i<=$row->category->number_of_fields ; $i++)
 						 	{
 						 		$field = 'field'.$i;
-						 		$row_array += array($i+2 => $row->$field);
+						 		$row_array += array($i+3 => $row->$field);
 						 	}
 
 	  						$sheet->appendRow($row_array);
+
+	  						//echo('<br>');
 	  					}
 	  				}
     			});

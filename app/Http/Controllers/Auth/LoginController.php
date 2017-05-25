@@ -80,7 +80,7 @@ class LoginController extends Controller
             
             $socialUser = $googleAuth->getProfile();
 
-            if (! preg_match("/@august99.com$/", $socialUser['email']))
+            if (! (preg_match("/@august99.com$/", $socialUser['email']) or preg_match("/@thedesignpeople.com$/", $socialUser['email'])))
             {
                 return redirect('/login')->withOk("Invalid Email");
             }

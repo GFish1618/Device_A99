@@ -76,7 +76,7 @@
                                             Home
                                         </a>
 
-                                        <a href="/EquipmentReleaseResponsibilityForm.docx">
+                                        <a href="{{ url('EquipmentReleaseResponsibilityForm.docx') }}">
                                             Download <br>Responsability Form
                                         </a>
 
@@ -89,9 +89,9 @@
                                             Import from excel
                                         </a>
 
-                                        <a href="{{ route('device.gdrive') }}">
+                                        <!--<a href="{{ route('device.gdrive') }}">
                                             Import from <br>Google Drive
-                                        </a>
+                                        </a>-->
 
                                         @endif
 
@@ -112,6 +112,10 @@
                                         </a>
                                         <a href="{{ route('categories.index') }}">
                                             Categories
+                                        </a>
+
+                                        <a href="{{ route('companies.index') }}">
+                                            Companies
                                         </a>
 
                                         <a href="#" onclick="confirmation();">
@@ -146,45 +150,8 @@
 
 
         @if (!Auth::guest())
-        <div class="container-fluid">
+    <div class="container-fluid">
         <div class="col-sm-offset-0 col-sm-2">
-    
-        <!--<div class="panel panel-default">
-
-        <div class="panel-body">
-            <div class="card hovercard hidden-xs">
-                <div class="cardheader">
-
-                </div>
-
-                <div class="avatar">
-                    <img alt="" src="{{ Auth::user()->avatar }}">
-                </div>
-                <div class="info">
-                    <div class="title">
-                        {{ Auth::user()->nickname }}
-                    </div>
-                     <div class="desc">
-                        {{ Auth::user()->name }}
-                    </div>
-                    <div class="desc">
-                        {{ Auth::user()->email }}
-                    </div>
-                    <div class="desc">
-                        @if (Auth::user()->admin >= 2)
-                            Admin
-                        @else
-                            @if (Auth::user()->admin >= 1)
-                                User
-                            @else
-                                Guest
-                            @endif
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>-->
 
         <div class="list-group">
             <a href="{{ url('/device') }}" class="list-group-item">All</a>
@@ -192,7 +159,11 @@
             <div id="companies_list"></div>
         </div>
 
-    </div>
+        </div>
+
+        
+
+
     <!--
         @endif
         <ol class="breadcrumb breadcrumb-arrow">
@@ -235,6 +206,44 @@
 
         </ol>-->
         @yield('content')
+
+        <div class="col-sm-2 hidden-xs hidden-sm hidden-md">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="card hovercard">
+                        <div class="cardheader">
+                        </div>
+
+                        <div class="avatar">
+                            <img alt="" src="{{ Auth::user()->avatar }}">
+                        </div>
+
+                        <div class="info">
+                            <div class="title">
+                                {{ Auth::user()->nickname }}
+                            </div>
+                             <div class="desc">
+                                {{ Auth::user()->name }}
+                            </div>
+                            <div class="desc">
+                                {{ Auth::user()->email }}
+                            </div>
+                            <div class="desc">
+                                @if (Auth::user()->admin >= 2)
+                                    Admin
+                                @else
+                                    @if (Auth::user()->admin >= 1)
+                                        User
+                                    @else
+                                        Guest
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
         <!-- JavaScripts -->

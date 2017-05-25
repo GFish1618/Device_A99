@@ -63,7 +63,7 @@ class CategoriesController extends Controller
     {
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
-        $response = $this->categoriesRepository->store($request->all());
+        $this->categoriesRepository->store($request->all());
 
         return response()->json();
     }
@@ -107,7 +107,7 @@ class CategoriesController extends Controller
         if(auth()->user()->admin < 2) {return redirect('device')->withError("You don't have the right to get here");}
 
         $this->categoriesRepository->update($id, $request->all());
-
+        
         return response()->json();
     }
 

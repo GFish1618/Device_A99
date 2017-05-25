@@ -20,10 +20,24 @@
 			</div>
 
 			<div class="form-group">
+				{!! Form::label('Company') !!}
+                {!! Form::select('company_id', $comp_array, null, ['class' => 'form-control' , 'id' => 'company_select']) !!}
+                <small class="help-block hide"></small>
+            </div>
+
+			<div class="form-group">
+				{!! Form::label('Department') !!}
+				{!! Form::text('department', null, ['class' => 'form-control', 'placeholder' => 'Department']) !!}
+				<small class="help-block hide"></small>
+			</div>
+
+			<div class="form-group">
 				{!! Form::label('Category') !!}
 				{!! Form::select('category_id', $cat_array, null, ['class' => 'form-control' , 'id' => 'category_select']) !!}
 				<small class="help-block hide"></small>
 			</div>
+
+			<hr>
 
 			<div id='fields_edit'>
 
@@ -53,24 +67,17 @@
 					
 
 <script>
-function gestionErreurs(err)
-{
-  alert('Erreur : \n' + err);
-  return true;
-}
-window.onerror = gestionErreurs;
 
 $(function(){
 
-	id_edit=<?php $device->id ?>;
+	id_edit=<?php echo($device->id); ?>;
 
 	$('#category_select').change(function() {
 		category_id = $('#category_select').val();
 		$('#fields_edit').load("{{url('categories/fields')}}/edit/"+category_id);
-		alert("{{url('categories/fields')}}/edit/"+category_id);
 	});
 
-	$(document).on('submit', '#edit_form', function(e) { 
+	$(document).on('submit', '#edit_form', function(e) {
         e.preventDefault();
          
         $('input+small').text('');
@@ -78,12 +85,12 @@ $(function(){
          
         $.ajax({
             method: $(this).attr('method'),
-            url: "{{ url('device') }}/"+id_edit+"/edit",
+            url: "{{ url('device') }}/"+id_edit,
             data: $(this).serialize(),
             dataType: "json"
         })
         .done(function(data) {
-        	window.location.replace("{{ url('devices') }}")
+        	window.location.reload(true);
         })
         .fail(function(data) {
             $.each(data.responseJSON, function (key, value) {

@@ -4,14 +4,14 @@
 
 <div class="col-sm-8">
     	@if(session()->has('ok'))
-			<div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
+			<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>{!! session('ok') !!}</div>
 		@endif
 		@if(session()->has('error'))
-			<div class="alert alert-danger alert-dismissible">{!! session('error') !!}</div>
+			<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>{!! session('error') !!}</div>
 		@endif
 		<div class="panel panel-default">
  		<div class="panel-body">
- 		<a class="btn btn-success" id="add_category" href="#">Add a category</a>
+ 		<a class="btn btn-primary" id="add_category" href="#">Add a category</a>
 		 <div class="col-md-12">
 			{!! Form::open(['method' => 'POST', 'route' => ['device.indexPage'], 'id' => 'nb_per_page']) !!}
 				<select name="nbp" class="btn pull-right" onchange="document.getElementById('nb_per_page').submit();">
@@ -39,11 +39,11 @@
 							<td>{!! $category->number_of_fields !!}</td>
 							<!--<td>{!! link_to_route('categories.edit', 'Edit', [$category->id], ['class' => 'btn btn-warning btn-block', 'id'=>'edit_category']) !!}
 							</td>-->
-							<td><a class="btn btn-info btn-block edit_category" href="#" value="{{ $category->id }}">Edit</a>
+							<td><a class="btn btn-warning btn-block edit_category" href="#" value="{{ $category->id }}">Edit</a>
 							</td>
 							<td>
 								{!! Form::open(['method' => 'DELETE', 'route' => ['categories.destroy', $category->id]]) !!}
-									{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-block', 'onclick' => 'return confirm(\'Are you sure?\')']) !!}
+									{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-block', 'onclick' => 'return confirm(\'This will delete all devices belonging to this category, Are you sure?\')']) !!}
 								{!! Form::close() !!}
 							</td>
 						</tr>
@@ -73,12 +73,6 @@
 					<div class="form-group">
 						{!! Form::label('Category name') !!}
 						{!! Form::text('category_name', null, ['class' => 'form-control', 'placeholder' => 'Category name']) !!}
-						<small class="help-block hide"></small>
-					</div>
-
-					<div class="form-group">
-						{!! Form::label('Parents') !!}
-						{!! Form::text('parents', null, ['class' => 'form-control', 'placeholder' => 'Parents']) !!}
 						<small class="help-block hide"></small>
 					</div>
 
@@ -182,7 +176,6 @@ $(function(){
         .fail(function(data) {
             $.each(data.responseJSON, function (key, value) {
             	var input = '#add_Form [name=' + key + ']';
-            	alert(input);
                 $(input + '+small').removeClass('hide');
                 $(input + '+small').text(value);
                 $(input).parent().addClass('has-error');
@@ -197,6 +190,7 @@ $(function(){
     $('.edit_category').click(function(e) {
     	e.preventDefault();
         $('#edit_Modal').modal();
+        $('#wrapToFill1').html('<div class="modal-dialog"><div class="modal-content"><h1 class="modal-title text-primary"><img src="{{url('ajax-loader.gif')}}"> . . . . . . .</h1></div></div>');
         $('#wrapToFill1').load("{{ url('categories') }}/" + $(this).attr("value") + "/edit #wrap1");
         $('#wrapToFill2').load("{{ url('categories') }}/" + $(this).attr("value") + "/edit #wrap2",
         function(){

@@ -11,10 +11,10 @@
 				{!! Form::text('device_name', null, ['class' => 'form-control', 'placeholder' => 'Device Name*']) !!}
 				{!! $errors->first('device_name', '<small class="help-block">:message</small>') !!}
 			</div>
-			
+
 			<div class="form-group">
-				{!! Form::select('company_id', $comp_array, null, ['class' => 'form-control']) !!}
-				{!! $errors->first('category_id', '<small class="help-block">:message</small>') !!}
+				{!! Form::select('company_id', $comp_array, null, ['class' => 'form-control' , 'id' => 'company_select']) !!}
+				{!! $errors->first('company_id', '<small class="help-block">:message</small>') !!}
 			</div>
 
 			<div class="form-group {!! $errors->has('device_name') ? 'has-error' : '' !!}">
@@ -26,6 +26,8 @@
 				{!! Form::select('category_id', $cat_array, null, ['class' => 'form-control' , 'id' => 'category_select']) !!}
 				{!! $errors->first('category_id', '<small class="help-block">:message</small>') !!}
 			</div>
+
+			<hr>
 
 			<div id='fields_create'>
 				<input type="hidden" class="form-control" name="number_of_fields" value="0" id="nb_fields_add">

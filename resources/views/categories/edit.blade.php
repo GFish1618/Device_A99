@@ -5,11 +5,6 @@
         <input type="text" class="form-control" name="category_name" value="{{ $category->category_name }}">
     </div>
 
-    <div class="form-group">
-        <label class="control-label">Parents</label>
-       	<input type="text" class="form-control" name="parents" value="{{ $category->parents }}">
-    </div>
-
 </div>
 
 
